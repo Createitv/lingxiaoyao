@@ -3,7 +3,7 @@ import { WechatFollowCard } from "@workspace/ui/components/wechat-follow-card";
 
 export const metadata: Metadata = {
   title: "关于我",
-  description: "关于 lingxiaoyao — AI 课程教育平台",
+  description: "关于林逍遥 AI — AI 课程教育平台",
 };
 
 export default function AboutPage() {
@@ -12,7 +12,7 @@ export default function AboutPage() {
       <h1 className="text-3xl font-bold mb-6">关于我</h1>
       <div className="prose prose-zinc dark:prose-invert max-w-none">
         <p>
-          你好！我是 lingxiaoyao，专注于 AI 工具教育，帮助更多人学会用 AI
+          你好！我是林逍遥，专注于 AI 工具教育，帮助更多人学会用 AI
           提升日常工作效率。
         </p>
         <p>

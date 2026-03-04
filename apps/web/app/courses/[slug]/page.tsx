@@ -127,7 +127,7 @@ export default async function CoursePage({ params }: CoursePageProps) {
               <div>✅ 永久有效</div>
             </div>
             <Button className="w-full" size="lg" asChild>
-              <Link href={`/payment?courseSlug=${slug}`}>
+              <Link href={`/payment/confirm?courseSlug=${slug}`}>
                 {course.price === 0 ? "免费获取" : "立即购买"}
               </Link>
             </Button>

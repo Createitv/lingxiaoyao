@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
     orderBy: { createdAt: "desc" },
   });
 
-  const formatted = comments.map((c) => ({
+  const formatted = comments.map((c: typeof comments[number]) => ({
     id: c.id,
     userId: c.userId,
     user: { nickname: c.user.nickname, avatarUrl: c.user.avatarUrl },

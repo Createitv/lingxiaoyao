@@ -59,7 +59,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     datePublished: article.date,
     author: {
       "@type": "Person",
-      name: "lingxiaoyao",
+      name: "林逍遥",
     },
   };
 

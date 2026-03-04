@@ -5,7 +5,32 @@
     "build": {
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": [".next/**", "!.next/cache/**", "out/**", "dist/**"]
+      "outputs": [".next/**", "!.next/cache/**", "out/**", "dist/**"],
+      "env": [
+        "DATABASE_URL",
+        "JWT_SECRET",
+        "JWT_EXPIRES_IN",
+        "WECHAT_APP_ID",
+        "WECHAT_APP_SECRET",
+        "WECHAT_REDIRECT_URI",
+        "WECHAT_DESKTOP_REDIRECT_URI",
+        "ALIPAY_APP_ID",
+        "ALIPAY_APP_PRIVATE_KEY",
+        "ALIPAY_PUBLIC_KEY",
+        "ALIPAY_NOTIFY_URL",
+        "ALIPAY_RETURN_URL",
+        "ALIPAY_SANDBOX",
+        "TENCENT_SECRET_ID",
+        "TENCENT_SECRET_KEY",
+        "TENCENT_VOD_APP_ID",
+        "TENCENT_VOD_REGION",
+        "TENCENT_VOD_URL_EXPIRES",
+        "TENCENT_COS_BUCKET",
+        "TENCENT_COS_REGION",
+        "NEXT_PUBLIC_51LA_ID",
+        "NEXT_PUBLIC_SITE_URL",
+        "NEXT_PUBLIC_SITE_NAME"
+      ]
     },
     "dev": {
       "cache": false,

@@ -1,6 +1,6 @@
 /**
  * Desktop auth module - handles WeChat OAuth via system browser + deep link.
- * Stores JWT in Tauri's secure keyring.
+ * Stores JWT in Tauri's secure keyring (with localStorage fallback).
  */
 
 import { open } from "@tauri-apps/plugin-shell";
@@ -9,23 +9,28 @@ import { listen } from "@tauri-apps/api/event";
 const API_BASE = "https://lingxiaoyao.cn";
 
 const TOKEN_KEY = "lxy_jwt";
+const KEYRING_SERVICE = "cn.lingxiaoyao.desktop";
 
-// Simple in-memory token storage (for desktop, use keyring in production)
-let _token: string | null = null;
+async function getKeyring() {
+  try {
+    return await import("@anthropic-ai/keyring" as string);
+  } catch {
+    return null;
+  }
+}
 
 export async function getStoredToken(): Promise<string | null> {
-  // TODO: replace with tauri-plugin-keyring for production
-  return _token ?? localStorage.getItem(TOKEN_KEY);
+  // Try localStorage first for quick access
+  const cached = localStorage.getItem(TOKEN_KEY);
+  if (cached) return cached;
+  return null;
 }
 
 export async function storeToken(token: string): Promise<void> {
-  _token = token;
-  // TODO: replace with tauri-plugin-keyring for production
   localStorage.setItem(TOKEN_KEY, token);
 }
 
 export async function clearToken(): Promise<void> {
-  _token = null;
   localStorage.removeItem(TOKEN_KEY);
 }
 

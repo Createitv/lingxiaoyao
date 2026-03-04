@@ -4,48 +4,49 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
+    /* Claude-inspired warm palette */
+    --background: 40 33% 98%;
+    --foreground: 30 10% 12%;
     --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
+    --card-foreground: 30 10% 12%;
     --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
-    --primary: 240 5.9% 10%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
-    --accent: 240 4.8% 95.9%;
-    --accent-foreground: 240 5.9% 10%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 240 5.9% 10%;
-    --radius: 0.5rem;
+    --popover-foreground: 30 10% 12%;
+    --primary: 18 60% 55%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 30 20% 94%;
+    --secondary-foreground: 30 10% 20%;
+    --muted: 35 18% 93%;
+    --muted-foreground: 30 8% 46%;
+    --accent: 35 25% 91%;
+    --accent-foreground: 30 10% 12%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 35 15% 88%;
+    --input: 35 15% 88%;
+    --ring: 18 60% 55%;
+    --radius: 0.625rem;
   }
 
   .dark {
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 240 10% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 240 10% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 240 5.9% 10%;
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
-    --accent: 240 3.7% 15.9%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 240 4.9% 83.9%;
+    --background: 30 8% 7%;
+    --foreground: 35 15% 92%;
+    --card: 30 8% 9%;
+    --card-foreground: 35 15% 92%;
+    --popover: 30 8% 9%;
+    --popover-foreground: 35 15% 92%;
+    --primary: 18 60% 60%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 30 8% 14%;
+    --secondary-foreground: 35 15% 90%;
+    --muted: 30 6% 14%;
+    --muted-foreground: 35 10% 55%;
+    --accent: 30 8% 16%;
+    --accent-foreground: 35 15% 92%;
+    --destructive: 0 62% 40%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 30 6% 18%;
+    --input: 30 6% 18%;
+    --ring: 18 60% 60%;
   }
 }
 
@@ -65,6 +66,11 @@
   code {
     @apply font-mono text-sm;
   }
+}
+
+/* Selection color */
+::selection {
+  background: hsl(18 60% 55% / 0.15);
 }
 
 /* MDX prose styles */
