@@ -57,6 +57,9 @@ importers:
       '@tarojs/plugin-platform-weapp':
         specifier: ^4.0.0
         version: 4.1.11(@tarojs/service@4.1.11(@swc/helpers@0.5.15))(@tarojs/shared@4.1.11)
+      '@tarojs/react':
+        specifier: ^4.1.11
+        version: 4.1.11(react@18.3.1)
       '@tarojs/runtime':
         specifier: ^4.0.0
         version: 4.1.11
@@ -2463,6 +2466,12 @@ packages:
     peerDependencies:
       '@tarojs/service': 4.1.11
       '@tarojs/shared': 4.1.11
+
+  '@tarojs/react@4.1.11':
+    resolution: {integrity: sha512-+F/oH/7AXUbWKRu9Dg/S5mBOqDi8o4RMctaoRuYBI7ZTe4uNmCGY3DJDjf+gH7kThVvpPJ2VsbyiWzs/V0bOPg==}
+    engines: {node: '>= 18'}
+    peerDependencies:
+      react: ^18
 
   '@tarojs/runner-utils@4.1.11':
     resolution: {integrity: sha512-c8aDNRQCP0F9MeN5oyycYl+h22nOsh5vNkRs1ToYxyp4T4EpACcSQbisxdOKpyKCO6vCv86RIjzjkIbBDR84Cw==}
@@ -6691,6 +6700,12 @@ packages:
   react-is@17.0.2:
     resolution: {integrity: sha512-w2GsyukL62IJnlaff/nRegPQR94C/XXamvMWmSHRJ4y7Ts/4ocGRmTHvOs8PSE6pB3dWOrD/nueuU5sduBsQ4w==}
 
+  react-reconciler@0.29.0:
+    resolution: {integrity: sha512-wa0fGj7Zht1EYMRhKWwoo1H9GApxYLBuhoAuXN0TlltESAjDssB+Apf0T/DngVqaMyPypDmabL37vw/2aRM98Q==}
+    engines: {node: '>=0.10.0'}
+    peerDependencies:
+      react: ^18.2.0
+
   react-remove-scroll-bar@2.3.8:
     resolution: {integrity: sha512-9r+yi9+mgU33AKcj6IbT9oRCO78WriSj6t/cF8DWBZJ9aOGPOTEDvdUDz1FwKim7QXWwmHqtdHnRJfhAxEG46Q==}
     engines: {node: '>=10'}
@@ -10068,6 +10083,13 @@ snapshots:
     dependencies:
       '@tarojs/service': 4.1.11(@swc/helpers@0.5.15)
       '@tarojs/shared': 4.1.11
+
+  '@tarojs/react@4.1.11(react@18.3.1)':
+    dependencies:
+      '@tarojs/runtime': 4.1.11
+      '@tarojs/shared': 4.1.11
+      react: 18.3.1
+      react-reconciler: 0.29.0(react@18.3.1)
 
   '@tarojs/runner-utils@4.1.11(@swc/helpers@0.5.15)':
     dependencies:
@@ -15076,6 +15098,12 @@ snapshots:
   react-is@16.13.1: {}
 
   react-is@17.0.2: {}
+
+  react-reconciler@0.29.0(react@18.3.1):
+    dependencies:
+      loose-envify: 1.4.0
+      react: 18.3.1
+      scheduler: 0.23.2
 
   react-remove-scroll-bar@2.3.8(@types/react@19.2.14)(react@19.2.4):
     dependencies:
