@@ -10,7 +10,7 @@ export default function AboutPage() {
   return (
     <div className="container mx-auto px-4 py-12 max-w-2xl">
       <h1 className="text-3xl font-bold mb-6">关于我</h1>
-      <div className="prose prose-zinc dark:prose-invert max-w-none">
+      <div className="prose dark:prose-invert max-w-none">
         <p>
           你好！我是林逍遥，专注于 AI 工具教育，帮助更多人学会用 AI
           提升日常工作效率。

@@ -19,6 +19,15 @@ export async function getAllDocSlugs(): Promise<string[][]> {
   return docs.map((d) => d.slug.split("/"));
 }
 
+export async function getAllDocSlugsWithDates(): Promise<
+  { slug: string; updatedAt: Date }[]
+> {
+  return prisma.doc.findMany({
+    where: { publishedAt: { not: null } },
+    select: { slug: true, updatedAt: true },
+  });
+}
+
 export async function getAllDocs(): Promise<DocListItem[]> {
   const docs = await prisma.doc.findMany({
     where: { publishedAt: { not: null } },

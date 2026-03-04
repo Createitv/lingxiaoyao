@@ -6,7 +6,16 @@ import { SiteFooter } from "@/components/site-footer";
 import { SearchCommand } from "@/components/search-command";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-sans",
+  fallback: [
+    "PingFang SC",
+    "Microsoft YaHei",
+    "Hiragino Sans GB",
+    "sans-serif",
+  ],
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL(
@@ -24,9 +33,22 @@ export const metadata: Metadata = {
     url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://lingxiaoyao.cn",
     siteName: process.env.NEXT_PUBLIC_SITE_NAME ?? "林逍遥 AI",
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "林逍遥 AI — AI 课程与教程",
+    description:
+      "学习 AI 工具、Claude 使用技巧，提升日常工作效率。免费教程 + 系统视频课程。",
+  },
   robots: {
     index: true,
     follow: true,
+  },
+  verification: {
+    other: {
+      ...(process.env.NEXT_PUBLIC_BAIDU_SITE_VERIFICATION
+        ? { "baidu-site-verification": process.env.NEXT_PUBLIC_BAIDU_SITE_VERIFICATION }
+        : {}),
+    },
   },
 };
 
@@ -45,6 +67,13 @@ export default function RootLayout({
             defer
             src={`https://sdk.51.la/js-sdk-pro.min.js`}
             data-id={la51Id}
+          />
+        )}
+        {process.env.NEXT_PUBLIC_BAIDU_PUSH === "true" && (
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `(function(){var bp=document.createElement('script');bp.src='https://zz.bdstatic.com/linksubmit/push.js';var s=document.getElementsByTagName('script')[0];s.parentNode.insertBefore(bp,s)})();`,
+            }}
           />
         )}
       </head>

@@ -5,6 +5,9 @@ import rehypeHighlight from "rehype-highlight";
 import rehypeSlug from "rehype-slug";
 import { getDocBySlug, getAllDocSlugs } from "@/lib/content/docs";
 import { ProgressButton } from "@workspace/ui/components/progress-button";
+import { mdxComponents } from "@/components/mdx";
+import { extractTocHeadings } from "@/lib/docs-utils";
+import { DocsToc } from "@/components/docs/docs-toc";
 
 interface DocPageProps {
   params: Promise<{ slug: string[] }>;
@@ -25,6 +28,11 @@ export async function generateMetadata({
   return {
     title: doc.title,
     description: doc.description,
+    openGraph: {
+      title: doc.title,
+      description: doc.description,
+      type: "article",
+    },
   };
 }
 
@@ -33,26 +41,34 @@ export default async function DocPage({ params }: DocPageProps) {
   const doc = await getDocBySlug(slug);
   if (!doc) notFound();
 
+  const headings = extractTocHeadings(doc.content);
+
   return (
-    <article className="container mx-auto px-4 py-12 max-w-3xl">
-      <h1 className="text-3xl font-bold mb-6">{doc.title}</h1>
-      <div className="prose prose-zinc dark:prose-invert max-w-none">
-        <MDXRemote
-          source={doc.content}
-          options={{
-            mdxOptions: {
-              rehypePlugins: [rehypeHighlight, rehypeSlug],
-            },
-          }}
-        />
-      </div>
-      <div className="mt-10 border-t pt-6">
-        <ProgressButton
-          contentType="doc"
-          contentSlug={slug.join("/")}
-          isCompleted={false}
-        />
-      </div>
-    </article>
+    <div className="flex">
+      <article className="flex-1 min-w-0 px-6 py-8 lg:px-10">
+        <div className="max-w-3xl">
+          <h1 className="text-3xl font-bold mb-6">{doc.title}</h1>
+          <div className="prose dark:prose-invert max-w-none">
+            <MDXRemote
+              source={doc.content}
+              components={mdxComponents}
+              options={{
+                mdxOptions: {
+                  rehypePlugins: [rehypeHighlight, rehypeSlug],
+                },
+              }}
+            />
+          </div>
+          <div className="mt-10 border-t pt-6">
+            <ProgressButton
+              contentType="doc"
+              contentSlug={slug.join("/")}
+              isCompleted={false}
+            />
+          </div>
+        </div>
+      </article>
+      <DocsToc headings={headings} />
+    </div>
   );
 }

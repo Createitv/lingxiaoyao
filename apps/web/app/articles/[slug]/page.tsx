@@ -52,15 +52,29 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     },
   };
 
+  const BASE_URL =
+    process.env.NEXT_PUBLIC_SITE_URL ?? "https://lingxiaoyao.cn";
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Article",
     headline: article.title,
     description: article.summary,
     datePublished: article.date,
+    url: `${BASE_URL}/articles/${slug}`,
+    image: article.coverUrl,
     author: {
       "@type": "Person",
       name: "林逍遥",
+    },
+    publisher: {
+      "@type": "Organization",
+      name: "林逍遥 AI",
+      url: BASE_URL,
+      logo: {
+        "@type": "ImageObject",
+        url: `${BASE_URL}/logo.png`,
+      },
     },
   };
 
@@ -70,7 +84,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <article className="container mx-auto px-4 py-12 max-w-3xl">
+      <article className="px-6 py-8 lg:px-10 max-w-3xl">
         {/* Header */}
         <header className="mb-8">
           <div className="flex flex-wrap gap-2 mb-3">
@@ -94,7 +108,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
         </header>
 
         {/* Content */}
-        <div className="prose prose-zinc dark:prose-invert max-w-none">
+        <div className="prose dark:prose-invert max-w-none">
           <MDXRemote source={article.content} options={mdxOptions} components={mdxComponents} />
         </div>
 

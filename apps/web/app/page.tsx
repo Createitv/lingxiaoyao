@@ -4,12 +4,44 @@ import { Button } from "@workspace/ui/components/button";
 import { getLatestArticles } from "@/lib/content/articles";
 import { getCourses } from "@/lib/content/courses";
 
+const BASE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://lingxiaoyao.cn";
+
 export default async function HomePage() {
   const latestArticles = await getLatestArticles(3);
   const courses = await getCourses();
 
+  const jsonLd = [
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      name: "林逍遥 AI",
+      url: BASE_URL,
+      description:
+        "学习 AI 工具、Claude 使用技巧，提升日常工作效率。免费教程 + 系统视频课程。",
+      potentialAction: {
+        "@type": "SearchAction",
+        target: `${BASE_URL}/search?q={search_term_string}`,
+        "query-input": "required name=search_term_string",
+      },
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      name: "林逍遥 AI",
+      url: BASE_URL,
+      logo: `${BASE_URL}/logo.png`,
+      description:
+        "AI 课程教育平台，提供 Claude 教程、AI 使用技巧和系统视频课程。",
+    },
+  ];
+
   return (
     <main>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* ── Hero ── */}
       <section className="relative overflow-hidden">
         {/* Warm gradient background */}

@@ -19,10 +19,38 @@ const nextConfig = {
             protocol: 'https',
             hostname: '*.vod2.myqcloud.com',
           },
+          // WeChat avatars
+          {
+            protocol: 'https',
+            hostname: 'thirdwx.qlogo.cn',
+          },
         ],
   },
   // Allow importing from workspace packages
   transpilePackages: ['@workspace/ui', '@workspace/types'],
+  // Security and caching headers
+  async headers() {
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          { key: 'X-Content-Type-Options', value: 'nosniff' },
+          { key: 'X-Frame-Options', value: 'DENY' },
+          { key: 'X-XSS-Protection', value: '1; mode=block' },
+          { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+        ],
+      },
+      {
+        source: '/(.*)\\.(js|css|woff2?|png|jpg|jpeg|gif|svg|ico|webp)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+    ];
+  },
 };
 
 module.exports = nextConfig;

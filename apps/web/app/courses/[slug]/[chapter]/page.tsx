@@ -52,8 +52,50 @@ export default async function ChapterPage({ params }: ChapterPageProps) {
   const prevChapter = course.chapters.find((c) => c.index === chapterIndex - 1);
   const nextChapter = course.chapters.find((c) => c.index === chapterIndex + 1);
 
+  const BASE_URL =
+    process.env.NEXT_PUBLIC_SITE_URL ?? "https://lingxiaoyao.cn";
+
+  const jsonLd = [
+    {
+      "@context": "https://schema.org",
+      "@type": "VideoObject",
+      name: chapterContent.title,
+      description: `${chapterContent.title} — ${course.title} 课程第 ${chapterIndex} 节`,
+      duration: `PT${chapterContent.duration}M`,
+      contentUrl: `${BASE_URL}/courses/${slug}/${chapterIndex}`,
+      thumbnailUrl: course.coverUrl,
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        {
+          "@type": "ListItem",
+          position: 1,
+          name: "课程",
+          item: `${BASE_URL}/courses`,
+        },
+        {
+          "@type": "ListItem",
+          position: 2,
+          name: course.title,
+          item: `${BASE_URL}/courses/${slug}`,
+        },
+        {
+          "@type": "ListItem",
+          position: 3,
+          name: chapterContent.title,
+        },
+      ],
+    },
+  ];
+
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* Breadcrumb */}
       <nav className="mb-6 text-sm text-muted-foreground">
         <Link href="/courses" className="hover:text-foreground">
@@ -81,7 +123,7 @@ export default async function ChapterPage({ params }: ChapterPageProps) {
 
       {/* MDX Content */}
       {chapterContent.content && (
-        <div className="prose prose-zinc dark:prose-invert max-w-none mb-8">
+        <div className="prose dark:prose-invert max-w-none mb-8">
           <MDXRemote
             source={chapterContent.content}
             options={{

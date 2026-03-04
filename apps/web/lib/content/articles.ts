@@ -72,6 +72,15 @@ export async function getAllArticleSlugs(): Promise<string[]> {
   return articles.map((a) => a.slug);
 }
 
+export async function getAllArticleSlugsWithDates(): Promise<
+  { slug: string; updatedAt: Date }[]
+> {
+  return prisma.article.findMany({
+    where: { publishedAt: { not: null } },
+    select: { slug: true, updatedAt: true },
+  });
+}
+
 export async function getLatestArticles(
   count: number,
 ): Promise<ArticleListItem[]> {

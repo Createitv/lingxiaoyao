@@ -43,8 +43,40 @@ export default async function CoursePage({ params }: CoursePageProps) {
   const user = await getCurrentUser();
   const purchased = user ? await hasCoursePurchased(user.id, course.id) : false;
 
+  const BASE_URL =
+    process.env.NEXT_PUBLIC_SITE_URL ?? "https://lingxiaoyao.cn";
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Course",
+    name: course.title,
+    description: course.description,
+    provider: {
+      "@type": "Organization",
+      name: "林逍遥 AI",
+      url: BASE_URL,
+    },
+    url: `${BASE_URL}/courses/${slug}`,
+    image: course.coverUrl,
+    offers: {
+      "@type": "Offer",
+      price: (course.price / 100).toFixed(2),
+      priceCurrency: "CNY",
+      availability: "https://schema.org/InStock",
+    },
+    hasCourseInstance: {
+      "@type": "CourseInstance",
+      courseMode: "Online",
+      courseWorkload: `PT${course.chapters.reduce((acc, ch) => acc + ch.duration, 0)}M`,
+    },
+  };
+
   return (
     <div className="container mx-auto px-4 py-12">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
         {/* Main content */}
         <div className="lg:col-span-2">
@@ -53,7 +85,7 @@ export default async function CoursePage({ params }: CoursePageProps) {
 
           {/* Course intro MDX */}
           {course.content && (
-            <div className="prose prose-zinc dark:prose-invert max-w-none mb-8">
+            <div className="prose dark:prose-invert max-w-none mb-8">
               <MDXRemote source={course.content} />
             </div>
           )}
