@@ -22,7 +22,7 @@ export async function getCurrentUser(): Promise<User | null> {
 
     return {
       id: user.id,
-      wechatOpenId: user.wechatOpenId,
+      wechatOpenId: user.wechatOpenId ?? undefined,
       wechatUnionId: user.wechatUnionId ?? undefined,
       nickname: user.nickname,
       avatarUrl: user.avatarUrl ?? undefined,

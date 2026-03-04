@@ -2,7 +2,7 @@
 
 export interface User {
   id: string;
-  wechatOpenId: string;
+  wechatOpenId?: string;
   wechatUnionId?: string;
   nickname: string;
   avatarUrl?: string;
