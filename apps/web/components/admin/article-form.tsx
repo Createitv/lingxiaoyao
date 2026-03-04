@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@workspace/ui/components/button";
+import { ImageUpload } from "./image-upload";
 
 interface ArticleData {
   id?: string;
@@ -58,13 +59,18 @@ export function ArticleForm({ initial }: { initial?: ArticleData }) {
     setForm({ ...form, tags: form.tags.filter((t) => t !== tag) });
   }
 
-  async function handleSave(publish: boolean) {
+  async function handleSave(publish?: boolean) {
     setSaving(true);
     setError("");
 
     const payload = {
       ...form,
-      publishedAt: publish ? new Date().toISOString() : form.publishedAt,
+      publishedAt:
+        publish === true
+          ? new Date().toISOString()
+          : publish === false
+            ? null
+            : form.publishedAt,
     };
 
     try {
@@ -180,15 +186,10 @@ export function ArticleForm({ initial }: { initial?: ArticleData }) {
             <h3 className="font-medium">发布设置</h3>
 
             <div>
-              <label className="mb-1.5 block text-sm font-medium">
-                封面图 URL
-              </label>
-              <input
-                type="text"
+              <label className="mb-1.5 block text-sm font-medium">封面图</label>
+              <ImageUpload
                 value={form.coverUrl}
-                onChange={(e) => setForm({ ...form, coverUrl: e.target.value })}
-                className="w-full rounded-md border bg-background px-3 py-2 text-sm"
-                placeholder="https://..."
+                onChange={(url) => setForm({ ...form, coverUrl: url })}
               />
             </div>
 
@@ -270,8 +271,8 @@ export function ArticleForm({ initial }: { initial?: ArticleData }) {
             )}
 
             <div className="flex flex-col gap-2">
-              <Button onClick={() => handleSave(false)} disabled={saving}>
-                {saving ? "保存中..." : "保存草稿"}
+              <Button onClick={() => handleSave()} disabled={saving}>
+                {saving ? "保存中..." : "保存"}
               </Button>
               {!form.publishedAt && (
                 <Button
@@ -280,6 +281,15 @@ export function ArticleForm({ initial }: { initial?: ArticleData }) {
                   disabled={saving}
                 >
                   发布
+                </Button>
+              )}
+              {form.publishedAt && (
+                <Button
+                  variant="outline"
+                  onClick={() => handleSave(false)}
+                  disabled={saving}
+                >
+                  下架
                 </Button>
               )}
               {isEditing && (

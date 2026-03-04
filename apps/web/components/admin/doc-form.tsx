@@ -32,14 +32,19 @@ export function DocForm({ initial }: { initial?: DocData }) {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
-  async function handleSave(publish: boolean) {
+  async function handleSave(publish?: boolean) {
     setSaving(true);
     setError("");
 
     const payload = {
       ...form,
       category: form.category || form.slug.split("/")[0] || form.slug,
-      publishedAt: publish ? new Date().toISOString() : form.publishedAt,
+      publishedAt:
+        publish === true
+          ? new Date().toISOString()
+          : publish === false
+            ? null
+            : form.publishedAt,
     };
 
     try {
@@ -193,8 +198,8 @@ export function DocForm({ initial }: { initial?: DocData }) {
             )}
 
             <div className="flex flex-col gap-2">
-              <Button onClick={() => handleSave(false)} disabled={saving}>
-                {saving ? "保存中..." : "保存草稿"}
+              <Button onClick={() => handleSave()} disabled={saving}>
+                {saving ? "保存中..." : "保存"}
               </Button>
               {!form.publishedAt && (
                 <Button
@@ -203,6 +208,15 @@ export function DocForm({ initial }: { initial?: DocData }) {
                   disabled={saving}
                 >
                   发布
+                </Button>
+              )}
+              {form.publishedAt && (
+                <Button
+                  variant="outline"
+                  onClick={() => handleSave(false)}
+                  disabled={saving}
+                >
+                  下架
                 </Button>
               )}
               {isEditing && (
