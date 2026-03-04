@@ -22,6 +22,8 @@
     "db:migrate:content": "tsx scripts/migrate-content-to-db.ts",
     "admin:promote": "tsx scripts/promote-admin.ts",
     "search:index": "tsx scripts/build-search-index.ts",
+    "tutorials:seed": "tsx scripts/seed-claude-tutorials.ts",
+    "tutorials:upload": "tsx scripts/upload-illustrations.ts",
     "clean": "turbo run clean && rm -rf node_modules/.cache"
   },
   "pnpm": {
