@@ -107,6 +107,7 @@ export async function GET(request: NextRequest) {
     // 1. Exchange code for access_token
     const tokenData = await getWechatToken(code);
     if (tokenData.errcode) {
+      console.error("[WeChat Callback] Token exchange failed:", tokenData.errcode, tokenData.errmsg);
       return NextResponse.json(
         { success: false, error: "微信授权失败，请重试" },
         { status: 400 },
@@ -119,6 +120,7 @@ export async function GET(request: NextRequest) {
       tokenData.openid,
     );
     if (userInfo.errcode) {
+      console.error("[WeChat Callback] User info failed:", userInfo.errcode, userInfo.errmsg);
       return NextResponse.json(
         { success: false, error: "获取用户信息失败，请重试" },
         { status: 400 },
