@@ -69,7 +69,7 @@ jobs:
             ## 下载说明
             - **macOS**: 下载 `.dmg` 文件（Intel + Apple Silicon 通用版）
             - **Windows**: 下载 `.exe` 安装程序
-          releaseDraft: true
+          releaseDraft: false
           prerelease: false
           args: ${{ matrix.args }}
 
