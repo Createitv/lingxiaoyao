@@ -13,6 +13,10 @@ import Link from "next/link";
 import { MdxRenderer } from "@/components/mdx/mdx-renderer";
 import { prisma } from "@/lib/db/prisma";
 
+export function generateStaticParams() {
+  return [];
+}
+
 interface ChapterPageProps {
   params: Promise<{ slug: string; chapter: string }>;
 }

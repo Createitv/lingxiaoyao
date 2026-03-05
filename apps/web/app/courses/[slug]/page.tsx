@@ -8,7 +8,11 @@ import { hasCoursePurchased } from "@/lib/db/user-courses";
 import { Button } from "@workspace/ui/components/button";
 import { MdxRenderer } from "@/components/mdx/mdx-renderer";
 
-export const revalidate = 0;
+export const revalidate = process.env.BUILD_TARGET === "desktop" ? false : 0;
+
+export function generateStaticParams() {
+  return [];
+}
 
 const defaultCovers: Record<string, string> = {
   "claude-for-everyone": "/courses/claude-for-everyone.svg",

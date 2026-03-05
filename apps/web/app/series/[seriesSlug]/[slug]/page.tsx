@@ -21,6 +21,10 @@ import { extractTocHeadings } from "@/lib/toc-utils";
 import { Toc } from "@/components/toc";
 import { CopyMarkdownButton } from "@/components/articles/copy-markdown-button";
 
+export function generateStaticParams() {
+  return [];
+}
+
 interface SeriesArticlePageProps {
   params: Promise<{ seriesSlug: string; slug: string }>;
 }

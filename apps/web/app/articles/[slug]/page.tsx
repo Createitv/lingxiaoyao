@@ -16,6 +16,10 @@ import { Toc } from "@/components/toc";
 import { CopyMarkdownButton } from "@/components/articles/copy-markdown-button";
 import { getCurrentUser } from "@/lib/auth/session";
 
+export function generateStaticParams() {
+  return [];
+}
+
 interface ArticlePageProps {
   params: Promise<{ slug: string }>;
 }
