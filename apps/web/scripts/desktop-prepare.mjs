@@ -3,7 +3,7 @@
  * Run BEFORE `next build` in the desktop build pipeline.
  * CI workspaces are disposable, so no restore step is needed.
  */
-import { readFileSync, writeFileSync, unlinkSync } from "fs";
+import { readFileSync, writeFileSync, unlinkSync, rmSync } from "fs";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
 
@@ -12,7 +12,17 @@ const appDir = join(__dirname, "..", "app");
 
 let patched = 0;
 
-// ── 0. Remove OG image files from dynamic routes ────────────────────
+// ── 0a. Remove API routes (server-only, not compatible with static export) ──
+const apiDir = join(appDir, "api");
+try {
+  rmSync(apiDir, { recursive: true, force: true });
+  patched++;
+  console.log("  removed: api/ (entire directory)");
+} catch {
+  console.warn("  skip: api/ directory not found");
+}
+
+// ── 0b. Remove OG image files from dynamic routes ────────────────────
 //    Next.js ignores generateStaticParams in opengraph-image files,
 //    making them impossible to statically export. Just delete them —
 //    OG images serve no purpose in a desktop app.
