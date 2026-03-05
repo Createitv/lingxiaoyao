@@ -21,25 +21,24 @@ import { extractTocHeadings } from "@/lib/toc-utils";
 import { Toc } from "@/components/toc";
 import { CopyMarkdownButton } from "@/components/articles/copy-markdown-button";
 
-export function generateStaticParams() {
-  return [];
-}
-
 interface SeriesArticlePageProps {
   params: Promise<{ seriesSlug: string; slug: string }>;
 }
 
 export async function generateStaticParams() {
-  const allParams: { seriesSlug: string; slug: string }[] = [];
-  for (const config of SERIES_CONFIG) {
-    const articles = await getSeriesArticles(config.name);
-    for (const article of articles) {
-      allParams.push({ seriesSlug: config.slug, slug: article.slug });
+  try {
+    const allParams: { seriesSlug: string; slug: string }[] = [];
+    for (const config of SERIES_CONFIG) {
+      const articles = await getSeriesArticles(config.name);
+      for (const article of articles) {
+        allParams.push({ seriesSlug: config.slug, slug: article.slug });
+      }
     }
+    return allParams;
+  } catch {
+    return [];
   }
-  return allParams;
 }
-
 export async function generateMetadata({
   params,
 }: SeriesArticlePageProps): Promise<Metadata> {

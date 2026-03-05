@@ -16,19 +16,18 @@ import { Toc } from "@/components/toc";
 import { CopyMarkdownButton } from "@/components/articles/copy-markdown-button";
 import { getCurrentUser } from "@/lib/auth/session";
 
-export function generateStaticParams() {
-  return [];
-}
-
 interface ArticlePageProps {
   params: Promise<{ slug: string }>;
 }
 
 export async function generateStaticParams() {
-  const slugs = await getAllArticleSlugs();
-  return slugs.map((slug) => ({ slug }));
+  try {
+    const slugs = await getAllArticleSlugs();
+    return slugs.map((slug) => ({ slug }));
+  } catch {
+    return [];
+  }
 }
-
 export async function generateMetadata({
   params,
 }: ArticlePageProps): Promise<Metadata> {
