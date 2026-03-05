@@ -22,11 +22,11 @@ try {
   console.warn("  skip: api/ directory not found");
 }
 
-// ── 0b. Remove OG image files from dynamic routes ────────────────────
-//    Next.js ignores generateStaticParams in opengraph-image files,
-//    making them impossible to statically export. Just delete them —
-//    OG images serve no purpose in a desktop app.
+// ── 0b. Remove ALL OG image files ────────────────────────────────────
+//    OG images serve no purpose in a desktop app and cause various
+//    compatibility issues with output: 'export'.
 const ogImagesToRemove = [
+  "opengraph-image.tsx",
   "articles/[slug]/opengraph-image.tsx",
   "courses/[slug]/opengraph-image.tsx",
 ];
