@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { View, Text, ScrollView } from "@tarojs/components";
+import { View, Text, Image, ScrollView } from "@tarojs/components";
 import Taro, { useDidShow } from "@tarojs/taro";
 import { getArticles } from "@/services/articles";
 import type { Article } from "@workspace/types";
@@ -7,7 +7,7 @@ import "./index.scss";
 
 export default function ArticlesPage() {
   const [articles, setArticles] = useState<Article[]>([]);
-  const [selectedTag, setSelectedTag] = useState<string | null>(null);
+  const [selectedSeries, setSelectedSeries] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useDidShow(() => {
@@ -21,10 +21,10 @@ export default function ArticlesPage() {
     setLoading(false);
   }
 
-  const allTags = [...new Set(articles.flatMap((a) => a.tags ?? []))];
+  const allSeries = [...new Set(articles.map((a) => a.series).filter(Boolean))] as string[];
 
-  const filtered = selectedTag
-    ? articles.filter((a) => a.tags?.includes(selectedTag))
+  const filtered = selectedSeries
+    ? articles.filter((a) => a.series === selectedSeries)
     : articles;
 
   function goToArticle(slug: string) {
@@ -34,28 +34,28 @@ export default function ArticlesPage() {
   return (
     <ScrollView scrollY className="articles-page">
       <View className="page-header">
-        <Text className="page-title">文章</Text>
+        <Text className="page-title">教程文章</Text>
       </View>
 
-      {/* Tag Filter */}
-      {allTags.length > 0 && (
+      {/* Series Filter */}
+      {allSeries.length > 0 && (
         <ScrollView scrollX className="tag-filter">
           <View className="tag-list">
             <Text
-              className={`tag-item ${!selectedTag ? "active" : ""}`}
-              onClick={() => setSelectedTag(null)}
+              className={`tag-item ${!selectedSeries ? "active" : ""}`}
+              onClick={() => setSelectedSeries(null)}
             >
               全部
             </Text>
-            {allTags.map((tag) => (
+            {allSeries.map((series) => (
               <Text
-                key={tag}
-                className={`tag-item ${selectedTag === tag ? "active" : ""}`}
+                key={series}
+                className={`tag-item ${selectedSeries === series ? "active" : ""}`}
                 onClick={() =>
-                  setSelectedTag(tag === selectedTag ? null : tag)
+                  setSelectedSeries(series === selectedSeries ? null : series)
                 }
               >
-                {tag}
+                {series}
               </Text>
             ))}
           </View>
@@ -70,11 +70,22 @@ export default function ArticlesPage() {
             className="article-card"
             onClick={() => goToArticle(article.slug)}
           >
-            <Text className="article-title">{article.title}</Text>
-            <Text className="article-summary">{article.summary}</Text>
-            <View className="article-meta">
-              <Text className="meta-date">{article.date}</Text>
-              <Text className="meta-time">{article.readingTime} 分钟</Text>
+            {article.coverUrl && (
+              <Image
+                className="article-cover"
+                src={article.coverUrl}
+                mode="aspectFill"
+              />
+            )}
+            <View className="article-body">
+              <View className="article-meta">
+                {article.series && (
+                  <Text className="meta-series">{article.series}</Text>
+                )}
+                <Text className="meta-time">约 {article.readingTime} 分钟</Text>
+              </View>
+              <Text className="article-title">{article.title}</Text>
+              <Text className="article-summary">{article.summary}</Text>
             </View>
           </View>
         ))}

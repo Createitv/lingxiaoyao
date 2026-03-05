@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
+
+export const dynamic = "force-dynamic";
 import { getCourseBySlug } from "@/lib/content/courses";
 
 export async function GET(

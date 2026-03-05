@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 
 export interface ArticleNavItem {
   slug: string;
@@ -20,12 +20,29 @@ interface ArticlesSidebarProps {
 
 export function ArticlesSidebar({ series }: ArticlesSidebarProps) {
   const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const activeSeries = searchParams.get("series");
 
   const [mobileOpen, setMobileOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
+  const [activeSeries, setActiveSeries] = useState<string | null>(null);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+
+  // Restore sidebar collapse state from localStorage
+  useEffect(() => {
+    const saved = localStorage.getItem("articles-sidebar-collapsed");
+    if (saved === "true") setSidebarCollapsed(true);
+  }, []);
+
+  // Persist sidebar collapse state
+  useEffect(() => {
+    localStorage.setItem("articles-sidebar-collapsed", String(sidebarCollapsed));
+  }, [sidebarCollapsed]);
+
+  // Read search params on client after mount to avoid hydration mismatch
+  // (useSearchParams inside Suspense without fallback causes server/client divergence)
+  useEffect(() => {
+    setActiveSeries(new URLSearchParams(window.location.search).get("series"));
+  }, [pathname]);
 
   // Close mobile menu on route change
   useEffect(() => {
@@ -152,7 +169,7 @@ export function ArticlesSidebar({ series }: ArticlesSidebarProps) {
           );
         })}
 
-        {filteredSeries.length === 0 && search.trim() && (
+        {filteredSeries.length === 0 && search.trim().length > 0 && (
           <p className="px-2 py-3 text-xs text-muted-foreground">
             未找到匹配的文章
           </p>
@@ -198,9 +215,36 @@ export function ArticlesSidebar({ series }: ArticlesSidebarProps) {
   return (
     <>
       {/* Desktop sidebar */}
-      <aside className="hidden lg:block fixed top-14 left-0 bottom-0 w-60 border-r bg-background overflow-y-auto z-30">
-        {navContent}
+      <aside
+        className={`hidden lg:block shrink-0 sticky top-14 h-[calc(100vh-3.5rem)] overflow-y-auto overflow-x-hidden border-r bg-background z-30 transition-[width] duration-300 ease-in-out ${
+          sidebarCollapsed ? "w-0 border-r-0" : "w-60"
+        }`}
+      >
+        <div className="w-60">{navContent}</div>
       </aside>
+
+      {/* Desktop collapse toggle */}
+      <button
+        onClick={() => setSidebarCollapsed((prev) => !prev)}
+        className="hidden lg:flex items-center justify-center shrink-0 sticky top-20 self-start z-40 -ml-3 h-6 w-6 rounded-full border bg-background shadow-sm hover:bg-accent transition-colors"
+        aria-label={sidebarCollapsed ? "展开侧边栏" : "收起侧边栏"}
+      >
+        <svg
+          width="12"
+          height="12"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className={`transition-transform duration-300 ${
+            sidebarCollapsed ? "" : "rotate-180"
+          }`}
+        >
+          <path d="m9 18 6-6-6-6" />
+        </svg>
+      </button>
 
       {/* Mobile toggle button */}
       <button

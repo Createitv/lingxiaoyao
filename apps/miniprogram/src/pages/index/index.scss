@@ -16,11 +16,37 @@
     line-height: 1.4;
   }
 
+  .hero-highlight {
+    color: rgba(255, 255, 255, 0.95);
+  }
+
   .hero-subtitle {
     display: block;
     margin-top: 20px;
     font-size: 28px;
     color: rgba(255, 255, 255, 0.85);
+    line-height: 1.5;
+  }
+}
+
+.search-entry {
+  display: flex;
+  align-items: center;
+  margin: 24px 30px 0;
+  padding: 0 28px;
+  height: 80px;
+  background: #fff;
+  border-radius: 40px;
+  box-shadow: 0 2px 12px rgba(26, 25, 21, 0.06);
+
+  .search-icon {
+    font-size: 28px;
+    margin-right: 12px;
+  }
+
+  .search-placeholder {
+    font-size: 26px;
+    color: #A39E99;
   }
 }
 
@@ -76,10 +102,13 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
+        padding-top: 20px;
+        border-top: 1px solid rgba(26, 25, 21, 0.06);
 
         .course-chapters {
-          font-size: 24px;
+          font-size: 22px;
           color: #A39E99;
+          letter-spacing: 0.5px;
         }
 
         .course-price {
@@ -100,12 +129,27 @@
     margin-bottom: 20px;
     box-shadow: 0 2px 12px rgba(26, 25, 21, 0.06);
 
+    .article-tags-row {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 12px;
+
+      .article-tag {
+        font-size: 20px;
+        color: #D97757;
+        background: rgba(217, 119, 87, 0.1);
+        padding: 4px 16px;
+        border-radius: 20px;
+      }
+    }
+
     .article-title {
       display: block;
       font-size: 30px;
       font-weight: 600;
       color: #1A1915;
-      margin-bottom: 12px;
+      margin-bottom: 8px;
+      line-height: 1.4;
     }
 
     .article-summary {
@@ -122,25 +166,13 @@
 
     .article-meta {
       display: flex;
-      justify-content: space-between;
+      gap: 20px;
       align-items: center;
 
+      .article-date,
       .article-time {
         font-size: 22px;
         color: #A39E99;
-      }
-
-      .article-tags {
-        display: flex;
-        gap: 12px;
-
-        .article-tag {
-          font-size: 20px;
-          color: #D97757;
-          background: rgba(217, 119, 87, 0.1);
-          padding: 4px 16px;
-          border-radius: 20px;
-        }
       }
     }
   }

@@ -1,4 +1,6 @@
 import { NextRequest } from "next/server";
+
+export const dynamic = "force-dynamic";
 import { prisma } from "@/lib/db/prisma";
 
 export async function POST(request: NextRequest) {

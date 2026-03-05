@@ -1,4 +1,6 @@
 import { NextResponse } from "next/server";
+
+export const dynamic = "force-dynamic";
 import { getCourses } from "@/lib/content/courses";
 
 export async function GET() {

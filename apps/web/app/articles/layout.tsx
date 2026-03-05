@@ -1,4 +1,3 @@
-import { Suspense } from "react";
 import { getAllArticles } from "@/lib/content/articles";
 import {
   ArticlesSidebar,
@@ -37,11 +36,11 @@ export default async function ArticlesLayout({
     .map((name) => seriesMap.get(name)!);
 
   return (
-    <div className="relative">
-      <Suspense>
+    <div className="container mx-auto px-4">
+      <div className="lg:flex relative">
         <ArticlesSidebar series={series} />
-      </Suspense>
-      <div className="lg:pl-60">{children}</div>
+        <div className="flex-1 min-w-0">{children}</div>
+      </div>
     </div>
   );
 }

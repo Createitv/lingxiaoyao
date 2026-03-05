@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
+
+export const dynamic = "force-dynamic";
 import { getAllArticles, getArticlesBySeries } from "@/lib/content/articles";
 
 export async function GET(req: NextRequest) {

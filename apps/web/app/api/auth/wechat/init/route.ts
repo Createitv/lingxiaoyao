@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
+
+export const dynamic = "force-dynamic";
 import { rateLimit } from "@/lib/rate-limit";
 
 // Generates the WeChat OAuth authorization URL and redirects user to it.

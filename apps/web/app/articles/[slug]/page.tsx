@@ -111,7 +111,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
               />
             </div>
 
-            <div className="px-6 lg:px-10 max-w-2xl relative z-10">
+            <div className="px-6 lg:px-10 max-w-3xl mx-auto relative z-10">
               {/* Series badge */}
               {article.series && (
                 <div className="hero-badge">
@@ -160,7 +160,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
           </header>
 
           {/* Content */}
-          <article className="px-6 lg:px-10 max-w-2xl">
+          <article className="px-6 lg:px-10 max-w-3xl mx-auto">
             <div className="prose dark:prose-invert max-w-none">
               <MDXRemote
                 source={article.content}
@@ -171,7 +171,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
           </article>
 
           {/* Footer */}
-          <footer className="px-6 lg:px-10 max-w-2xl mt-12 space-y-6 border-t pt-8">
+          <footer className="px-6 lg:px-10 max-w-3xl mx-auto mt-12 space-y-6 border-t pt-8">
             <ProgressButton
               contentType="article"
               contentSlug={slug}

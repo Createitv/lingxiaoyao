@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@workspace/ui/components/button";
-import { ImageUpload } from "./image-upload";
+import { CoverImagePicker } from "./cover-image-picker";
 
 interface ArticleData {
   id?: string;
@@ -17,6 +17,102 @@ interface ArticleData {
   sortOrder: number;
   isFree: boolean;
   publishedAt: string | null;
+}
+
+function parseFrontmatter(raw: string): {
+  meta: Record<string, string | string[]>;
+  body: string;
+} {
+  const trimmed = raw.trimStart();
+  if (!trimmed.startsWith("---")) {
+    return { meta: {}, body: raw };
+  }
+
+  const end = trimmed.indexOf("\n---", 3);
+  if (end === -1) {
+    return { meta: {}, body: raw };
+  }
+
+  const yamlBlock = trimmed.slice(4, end);
+  const body = trimmed.slice(end + 4).trimStart();
+  const meta: Record<string, string | string[]> = {};
+
+  let currentKey = "";
+  let listValues: string[] = [];
+  let inList = false;
+
+  for (const line of yamlBlock.split("\n")) {
+    const listMatch = line.match(/^\s+-\s+(.+)/);
+    if (listMatch && inList) {
+      listValues.push(listMatch[1].trim().replace(/^["']|["']$/g, ""));
+      continue;
+    }
+
+    if (inList && currentKey) {
+      meta[currentKey] = listValues;
+      inList = false;
+      listValues = [];
+    }
+
+    const kvMatch = line.match(/^(\w+)\s*:\s*(.*)/);
+    if (!kvMatch) continue;
+
+    const [, key, val] = kvMatch;
+    const trimVal = val.trim();
+
+    // Inline array: tags: [a, b, c]
+    const arrayMatch = trimVal.match(/^\[(.+)\]$/);
+    if (arrayMatch) {
+      meta[key] = arrayMatch[1]
+        .split(",")
+        .map((s) => s.trim().replace(/^["']|["']$/g, ""));
+      continue;
+    }
+
+    if (trimVal === "" || trimVal === "[]") {
+      // Could be start of a YAML list
+      currentKey = key;
+      inList = true;
+      listValues = [];
+      continue;
+    }
+
+    meta[key] = trimVal.replace(/^["']|["']$/g, "");
+  }
+
+  if (inList && currentKey) {
+    meta[currentKey] = listValues;
+  }
+
+  return { meta, body };
+}
+
+function extractImages(content: string): string[] {
+  const urls: string[] = [];
+  const seen = new Set<string>();
+
+  // Markdown images: ![alt](url)
+  const mdRegex = /!\[.*?\]\((\S+?)\)/g;
+  let match;
+  while ((match = mdRegex.exec(content)) !== null) {
+    const url = match[1];
+    if (!seen.has(url)) {
+      seen.add(url);
+      urls.push(url);
+    }
+  }
+
+  // HTML img tags: <img src="url" />
+  const htmlRegex = /<img\s[^>]*src=["'](\S+?)["'][^>]*>/gi;
+  while ((match = htmlRegex.exec(content)) !== null) {
+    const url = match[1];
+    if (!seen.has(url)) {
+      seen.add(url);
+      urls.push(url);
+    }
+  }
+
+  return urls;
 }
 
 export function ArticleForm({ initial }: { initial?: ArticleData }) {
@@ -40,6 +136,26 @@ export function ArticleForm({ initial }: { initial?: ArticleData }) {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
+  const mdInputRef = useRef<HTMLInputElement>(null);
+  const coverManualRef = useRef(!!initial?.coverUrl);
+
+  const contentImages = useMemo(
+    () => extractImages(form.content),
+    [form.content],
+  );
+
+  // Auto-select first image as cover when content changes (only if user hasn't manually set cover)
+  useEffect(() => {
+    if (!coverManualRef.current && !form.coverUrl && contentImages.length > 0) {
+      setForm((prev) => ({ ...prev, coverUrl: contentImages[0] }));
+    }
+  }, [contentImages, form.coverUrl]);
+
+  function handleCoverChange(url: string) {
+    coverManualRef.current = true;
+    setForm({ ...form, coverUrl: url });
+  }
+
   function generateSlug(title: string): string {
     return title
       .toLowerCase()
@@ -59,6 +175,59 @@ export function ArticleForm({ initial }: { initial?: ArticleData }) {
 
   function removeTag(tag: string) {
     setForm({ ...form, tags: form.tags.filter((t) => t !== tag) });
+  }
+
+  function handleImportMarkdown(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    e.target.value = "";
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const text = reader.result as string;
+
+      if (form.content.trim() && !confirm("当前已有内容，导入将覆盖现有内容。是否继续？")) {
+        return;
+      }
+
+      const { meta, body } = parseFrontmatter(text);
+
+      const updates: Partial<ArticleData> = { content: body };
+
+      if (meta.title && typeof meta.title === "string") {
+        updates.title = meta.title;
+        if (!isEditing) {
+          updates.slug = generateSlug(meta.title);
+        }
+      }
+
+      const summary = meta.summary ?? meta.description ?? meta.excerpt;
+      if (summary && typeof summary === "string") {
+        updates.summary = summary;
+      }
+
+      if (meta.tags && Array.isArray(meta.tags)) {
+        updates.tags = meta.tags;
+      }
+
+      if (meta.series && typeof meta.series === "string") {
+        updates.series = meta.series;
+      }
+
+      if (meta.coverUrl && typeof meta.coverUrl === "string") {
+        updates.coverUrl = meta.coverUrl;
+        coverManualRef.current = true;
+      } else if (meta.cover && typeof meta.cover === "string") {
+        updates.coverUrl = meta.cover;
+        coverManualRef.current = true;
+      } else {
+        // Reset manual flag so auto-pick can work with new content
+        coverManualRef.current = false;
+      }
+
+      setForm((prev) => ({ ...prev, ...updates }));
+    };
+    reader.readAsText(file);
   }
 
   async function handleSave(publish?: boolean) {
@@ -169,9 +338,39 @@ export function ArticleForm({ initial }: { initial?: ArticleData }) {
           </div>
 
           <div>
-            <label className="mb-1.5 block text-sm font-medium">
-              内容（Markdown）
-            </label>
+            <div className="mb-1.5 flex items-center justify-between">
+              <label className="text-sm font-medium">内容（Markdown）</label>
+              <div>
+                <input
+                  ref={mdInputRef}
+                  type="file"
+                  accept=".md,.markdown,.mdx"
+                  onChange={handleImportMarkdown}
+                  className="hidden"
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => mdInputRef.current?.click()}
+                >
+                  <svg
+                    className="mr-1.5 h-4 w-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={1.5}
+                      d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
+                    />
+                  </svg>
+                  导入 Markdown
+                </Button>
+              </div>
+            </div>
             <textarea
               value={form.content}
               onChange={(e) => setForm({ ...form, content: e.target.value })}
@@ -189,9 +388,10 @@ export function ArticleForm({ initial }: { initial?: ArticleData }) {
 
             <div>
               <label className="mb-1.5 block text-sm font-medium">封面图</label>
-              <ImageUpload
+              <CoverImagePicker
                 value={form.coverUrl}
-                onChange={(url) => setForm({ ...form, coverUrl: url })}
+                onChange={handleCoverChange}
+                contentImages={contentImages}
               />
             </div>
 

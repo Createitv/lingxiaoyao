@@ -11,6 +11,7 @@ interface CourseItem {
   price: number;
   coverUrl?: string;
   totalChapters: number;
+  chapters: Array<{ index: number; title: string; isFree: boolean; duration: number }>;
 }
 
 export default function CoursesPage() {
@@ -43,46 +44,47 @@ export default function CoursesPage() {
   return (
     <ScrollView scrollY className="courses-page">
       <View className="page-header">
-        <Text className="page-title">全部课程</Text>
-        <Text className="page-subtitle">系统学习 AI 工具，提升工作效率</Text>
+        <Text className="page-title">视频课程</Text>
+        <Text className="page-subtitle">系统学习，效率加倍。视频 + 图文，随时随地学。</Text>
       </View>
 
       <View className="course-grid">
-        {courses.map((course) => (
-          <View
-            key={course.slug}
-            className="course-card"
-            onClick={() => goToDetail(course.slug)}
-          >
-            {course.coverUrl ? (
-              <Image
-                className="course-cover"
-                src={course.coverUrl}
-                mode="aspectFill"
-              />
-            ) : (
-              <View className="course-cover-placeholder">
-                <Text className="placeholder-text">
-                  {course.title.slice(0, 2)}
-                </Text>
-              </View>
-            )}
-            <View className="course-body">
-              <Text className="course-title">{course.title}</Text>
-              <Text className="course-desc">{course.description}</Text>
-              <View className="course-footer">
-                <Text className="course-chapters">
-                  {course.totalChapters} 节课
-                </Text>
-                <Text className="course-price">
-                  {course.price === 0
-                    ? "免费"
-                    : `¥${(course.price / 100).toFixed(0)}`}
-                </Text>
+        {courses.map((course) => {
+          const totalDuration = course.chapters?.reduce((acc, ch) => acc + ch.duration, 0) ?? 0;
+          return (
+            <View
+              key={course.slug}
+              className="course-card"
+              onClick={() => goToDetail(course.slug)}
+            >
+              {course.coverUrl ? (
+                <Image
+                  className="course-cover"
+                  src={course.coverUrl}
+                  mode="aspectFill"
+                />
+              ) : (
+                <View className="course-cover-placeholder">
+                  <Text className="placeholder-emoji">🎓</Text>
+                </View>
+              )}
+              <View className="course-body">
+                <Text className="course-title">{course.title}</Text>
+                <Text className="course-desc">{course.description}</Text>
+                <View className="course-footer">
+                  <Text className="course-chapters">
+                    {course.totalChapters} 节{totalDuration > 0 ? ` · ${totalDuration} 分钟` : " · 视频课程"}
+                  </Text>
+                  <Text className="course-price">
+                    {course.price === 0
+                      ? "免费"
+                      : `¥${(course.price / 100).toFixed(0)}`}
+                  </Text>
+                </View>
               </View>
             </View>
-          </View>
-        ))}
+          );
+        })}
       </View>
 
       {courses.length === 0 && !loading && (

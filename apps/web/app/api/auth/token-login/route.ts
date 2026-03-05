@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
+
+export const dynamic = "force-dynamic";
 import { verifyJWT } from "@/lib/auth/jwt";
 import { getSessionCookieOptions } from "@/lib/auth/session";
 

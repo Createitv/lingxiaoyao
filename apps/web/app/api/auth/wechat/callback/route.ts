@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
+
+export const dynamic = "force-dynamic";
 import { prisma } from "@/lib/db/prisma";
 import { signJWT } from "@/lib/auth/jwt";
 import { getSessionCookieOptions } from "@/lib/auth/session";

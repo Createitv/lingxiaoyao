@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
+
+export const dynamic = "force-dynamic";
 import { requireAdmin } from "@/lib/auth/admin";
 import { uploadToCOS } from "@/lib/tencent/cos";
 

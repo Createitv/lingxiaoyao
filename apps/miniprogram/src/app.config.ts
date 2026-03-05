@@ -8,6 +8,7 @@ export default defineAppConfig({
     "pages/article/index",
     "pages/dashboard/index",
     "pages/profile/index",
+    "pages/search/index",
     "pages/webview/index",
   ],
   window: {
