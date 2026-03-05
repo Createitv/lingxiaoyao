@@ -5,6 +5,9 @@ import {
   type ArticleSeriesGroup,
 } from "@/components/articles/articles-sidebar";
 
+// Difficulty ordering: easy → hard (series not listed here are hidden)
+const SERIES_ORDER = ["Claude 入门", "30天学Claude", "Claude 高级开发"];
+
 export default async function ArticlesLayout({
   children,
 }: {
@@ -12,13 +15,13 @@ export default async function ArticlesLayout({
 }) {
   const articles = await getAllArticles();
 
-  // Group articles by series, ordered by sortOrder
+  // Group articles by series, ordered by sortOrder within each series
   const seriesMap = new Map<string, ArticleSeriesGroup>();
-  // Sort by sortOrder for consistent ordering
   const sorted = [...articles].sort((a, b) => a.sortOrder - b.sortOrder);
 
   for (const a of sorted) {
     if (!a.series) continue;
+    if (!SERIES_ORDER.includes(a.series)) continue; // skip hidden series
     if (!seriesMap.has(a.series)) {
       seriesMap.set(a.series, { name: a.series, articles: [] });
     }
@@ -28,7 +31,10 @@ export default async function ArticlesLayout({
     });
   }
 
-  const series = Array.from(seriesMap.values());
+  // Order series by difficulty (SERIES_ORDER)
+  const series = SERIES_ORDER
+    .filter((name) => seriesMap.has(name))
+    .map((name) => seriesMap.get(name)!);
 
   return (
     <div className="relative">

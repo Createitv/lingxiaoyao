@@ -8,16 +8,6 @@ export const metadata: Metadata = {
   description: "免费 AI 教程、Claude 使用技巧，持续更新。",
 };
 
-// Distinct color palette for series category cards
-const seriesColors = [
-  { bg: "bg-blue-50 dark:bg-blue-950/40", border: "border-blue-200 dark:border-blue-800", text: "text-blue-700 dark:text-blue-300", icon: "text-blue-500" },
-  { bg: "bg-amber-50 dark:bg-amber-950/40", border: "border-amber-200 dark:border-amber-800", text: "text-amber-700 dark:text-amber-300", icon: "text-amber-500" },
-  { bg: "bg-emerald-50 dark:bg-emerald-950/40", border: "border-emerald-200 dark:border-emerald-800", text: "text-emerald-700 dark:text-emerald-300", icon: "text-emerald-500" },
-  { bg: "bg-violet-50 dark:bg-violet-950/40", border: "border-violet-200 dark:border-violet-800", text: "text-violet-700 dark:text-violet-300", icon: "text-violet-500" },
-  { bg: "bg-rose-50 dark:bg-rose-950/40", border: "border-rose-200 dark:border-rose-800", text: "text-rose-700 dark:text-rose-300", icon: "text-rose-500" },
-  { bg: "bg-cyan-50 dark:bg-cyan-950/40", border: "border-cyan-200 dark:border-cyan-800", text: "text-cyan-700 dark:text-cyan-300", icon: "text-cyan-500" },
-];
-
 interface ArticlesPageProps {
   searchParams: Promise<{ series?: string }>;
 }
@@ -25,12 +15,6 @@ interface ArticlesPageProps {
 export default async function ArticlesPage({ searchParams }: ArticlesPageProps) {
   const { series } = await searchParams;
   const articles = await getAllArticles();
-
-  // Difficulty ordering: easy → hard
-  const SERIES_ORDER = ["Claude 入门", "30天学Claude", "Claude 高级开发"];
-  const allSeries = SERIES_ORDER.filter((name) =>
-    articles.some((a) => a.series === name)
-  );
 
   // Filter articles
   const filtered = series
@@ -50,44 +34,6 @@ export default async function ArticlesPage({ searchParams }: ArticlesPageProps) 
       <p className="text-muted-foreground mb-8">
         系统学习 AI 工具使用技巧，所有文章免费阅读。
       </p>
-
-      {/* Series category cards — only show when viewing all articles */}
-      {!series && allSeries.length > 0 && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 mb-10">
-          {allSeries.map((s, i) => {
-            const color = seriesColors[i % seriesColors.length];
-            const count = articles.filter((a) => a.series === s).length;
-            return (
-              <Link
-                key={s}
-                href={`/articles?series=${encodeURIComponent(s)}`}
-                className={`group relative rounded-xl border p-5 transition-all hover:shadow-md ${color.bg} ${color.border}`}
-              >
-                <div className={`mb-3 ${color.icon}`}>
-                  <svg
-                    width="28"
-                    height="28"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20" />
-                    <path d="M8 7h6" />
-                    <path d="M8 11h8" />
-                  </svg>
-                </div>
-                <h3 className={`font-semibold ${color.text}`}>{s}</h3>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  {count} 篇文章
-                </p>
-              </Link>
-            );
-          })}
-        </div>
-      )}
 
       {/* Back to all link when filtering */}
       {series && (
