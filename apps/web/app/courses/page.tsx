@@ -14,6 +14,7 @@ const defaultCovers: Record<string, string> = {
   "claude-for-everyone": "/courses/claude-for-everyone.svg",
   "claude-api-development": "/courses/claude-api-development.svg",
   "claude-api": "/courses/claude-api-development.svg",
+  "ai-enterprise-custom": "/courses/ai-enterprise-custom.svg",
 };
 
 export default async function CoursesPage() {
