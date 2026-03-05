@@ -2,11 +2,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import { MDXRemote } from "next-mdx-remote/rsc";
 import { getCourseBySlug, getAllCourseSlugs } from "@/lib/content/courses";
 import { getCurrentUser } from "@/lib/auth/session";
 import { hasCoursePurchased } from "@/lib/db/user-courses";
 import { Button } from "@workspace/ui/components/button";
+import { MdxRenderer } from "@/components/mdx/mdx-renderer";
 
 export const revalidate = 0;
 
@@ -95,7 +95,7 @@ export default async function CoursePage({ params }: CoursePageProps) {
           {/* Course intro MDX */}
           {course.content && (
             <div className="prose dark:prose-invert max-w-none mb-8">
-              <MDXRemote source={course.content} />
+              <MdxRenderer source={course.content} />
             </div>
           )}
 

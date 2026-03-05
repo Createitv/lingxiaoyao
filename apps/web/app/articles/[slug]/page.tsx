@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { MDXRemote } from "next-mdx-remote/rsc";
 import rehypeHighlight from "rehype-highlight";
 import rehypeSlug from "rehype-slug";
 import remarkGfm from "remark-gfm";
 import { getArticleBySlug, getAllArticleSlugs } from "@/lib/content/articles";
 import { mdxComponents } from "@/components/mdx";
+import { MdxRenderer } from "@/components/mdx/mdx-renderer";
 import { WechatFollowCard } from "@workspace/ui/components/wechat-follow-card";
 import { ProgressButton } from "@workspace/ui/components/progress-button";
 import { CommentSectionWrapper } from "@/components/comment-section-wrapper";
@@ -56,7 +56,6 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
   };
 
   const headings = extractTocHeadings(article.content);
-
   const BASE_URL =
     process.env.NEXT_PUBLIC_SITE_URL ?? "https://lingxiaoyao.cn";
 
@@ -165,7 +164,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
           {/* Content */}
           <article className="px-6 lg:px-10 max-w-3xl mx-auto">
             <div className="prose dark:prose-invert max-w-none">
-              <MDXRemote
+              <MdxRenderer
                 source={article.content}
                 options={mdxOptions}
                 components={mdxComponents}

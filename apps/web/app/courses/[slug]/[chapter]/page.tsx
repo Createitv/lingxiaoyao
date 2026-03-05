@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
-import { MDXRemote } from "next-mdx-remote/rsc";
 import rehypeHighlight from "rehype-highlight";
 import rehypeSlug from "rehype-slug";
 import { getChapterContent, getCourseBySlug } from "@/lib/content/courses";
@@ -10,6 +9,7 @@ import { VideoPlayer } from "@workspace/ui/components/video-player";
 import { ProgressButton } from "@workspace/ui/components/progress-button";
 import { CommentSectionWrapper } from "@/components/comment-section-wrapper";
 import Link from "next/link";
+import { MdxRenderer } from "@/components/mdx/mdx-renderer";
 
 interface ChapterPageProps {
   params: Promise<{ slug: string; chapter: string }>;
@@ -124,7 +124,7 @@ export default async function ChapterPage({ params }: ChapterPageProps) {
       {/* MDX Content */}
       {chapterContent.content && (
         <div className="prose dark:prose-invert max-w-none mb-8">
-          <MDXRemote
+          <MdxRenderer
             source={chapterContent.content}
             options={{
               mdxOptions: {
