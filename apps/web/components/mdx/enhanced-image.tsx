@@ -29,18 +29,18 @@ export function EnhancedImage({
   );
 
   // SVG images get the illustration-card treatment
+  // Use <span> instead of <div> because MDX wraps images in <p>, and <div> inside <p> is invalid HTML
   if (isSvg) {
     return (
-      <figure className="illustration-card my-8 rounded-2xl border relative overflow-hidden p-6 md:p-8 bg-slate-50 dark:bg-[#0e1420] border-slate-200 dark:border-[#1e2d47]">
-        {/* Top gradient line */}
-        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#00d4ff] to-transparent" />
+      <span className="illustration-card my-8 rounded-2xl border relative overflow-hidden p-6 md:p-8 bg-slate-50 dark:bg-[#0e1420] border-slate-200 dark:border-[#1e2d47] block">
+        <span className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#00d4ff] to-transparent block" />
         {img}
         {alt && (
-          <figcaption className="mt-4 text-center text-xs font-mono text-slate-500 dark:text-slate-500">
+          <span className="mt-4 text-center text-xs font-mono text-slate-500 dark:text-slate-500 block">
             {alt}
-          </figcaption>
+          </span>
         )}
-      </figure>
+      </span>
     );
   }
 
