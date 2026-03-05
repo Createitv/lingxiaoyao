@@ -6,7 +6,7 @@ import {
 } from "@/components/articles/articles-sidebar";
 
 // Difficulty ordering: easy → hard (series not listed here are hidden)
-const SERIES_ORDER = ["Claude 入门", "30天学Claude", "Claude 高级开发"];
+const SERIES_ORDER = ["Claude 入门", "30天学Claude", "Claude API 开发", "Claude 高级开发"];
 
 export default async function ArticlesLayout({
   children,
