@@ -13,6 +13,10 @@ const navItems = [
   { href: "/articles", label: "文章" },
 ];
 
+const seriesItems = [
+  { href: "/series/21-day-claude", label: "21天学习 Claude" },
+];
+
 interface UserInfo {
   nickname: string;
   avatarUrl?: string;
@@ -111,6 +115,41 @@ export function SiteHeader() {
               </Link>
             );
           })}
+
+          {/* 系列 dropdown */}
+          <div className="relative group">
+            <button
+              className="px-3 py-2 text-sm font-medium rounded-md transition-colors inline-flex items-center gap-1 text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+            >
+              系列
+              <svg
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="transition-transform group-hover:rotate-180"
+              >
+                <path d="m6 9 6 6 6-6" />
+              </svg>
+            </button>
+            <div className="invisible group-hover:visible absolute left-0 top-full pt-1 z-50">
+              <div className="w-48 rounded-md border bg-popover p-1 shadow-md">
+                {seriesItems.map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className="flex w-full items-center rounded-sm px-3 py-2 text-sm hover:bg-accent transition-colors"
+                  >
+                    {item.label}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </div>
         </nav>
 
         {/* Right side */}
@@ -271,6 +310,21 @@ export function SiteHeader() {
                 );
               })}
             </nav>
+            {/* Mobile: 系列 section */}
+            <div className="mt-4 border-t pt-4">
+              <span className="block px-3 mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground/60">
+                系列
+              </span>
+              {seriesItems.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className="block rounded-md px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </div>
             {user && (
               <div className="mt-6 border-t pt-4">
                 <Link

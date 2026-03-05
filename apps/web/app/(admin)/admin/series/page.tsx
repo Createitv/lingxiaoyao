@@ -1,15 +1,17 @@
 import Link from "next/link";
 import { prisma } from "@/lib/db/prisma";
-import { buttonVariants } from "@workspace/ui/components/button";
+import { Button } from "@workspace/ui/components/button";
 
-export default async function AdminArticlesPage(): Promise<React.JSX.Element> {
+export default async function AdminSeriesPage(): Promise<React.JSX.Element> {
   const articles = await prisma.article.findMany({
-    orderBy: { updatedAt: "desc" },
+    where: { series: { not: null } },
+    orderBy: [{ series: "asc" }, { sortOrder: "asc" }],
     select: {
       id: true,
       slug: true,
       title: true,
-      tags: true,
+      series: true,
+      sortOrder: true,
       isFree: true,
       publishedAt: true,
       updatedAt: true,
@@ -19,21 +21,24 @@ export default async function AdminArticlesPage(): Promise<React.JSX.Element> {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold tracking-tight">文章管理</h1>
-        <Link href="/admin/articles/new" className={buttonVariants()}>新建文章</Link>
+        <h1 className="text-2xl font-bold tracking-tight">系列文章管理</h1>
+        <Button asChild>
+          <Link href="/admin/series/new">新建系列文章</Link>
+        </Button>
       </div>
 
       <div className="rounded-lg border bg-card">
         {articles.length === 0 ? (
           <div className="p-12 text-center text-muted-foreground">
-            暂无文章，点击上方按钮创建第一篇文章
+            暂无系列文章，点击上方按钮创建第一篇系列文章
           </div>
         ) : (
           <table className="w-full">
             <thead>
               <tr className="border-b text-left text-sm text-muted-foreground">
+                <th className="px-6 py-3 font-medium">序号</th>
                 <th className="px-6 py-3 font-medium">标题</th>
-                <th className="px-6 py-3 font-medium">标签</th>
+                <th className="px-6 py-3 font-medium">系列</th>
                 <th className="px-6 py-3 font-medium">状态</th>
                 <th className="px-6 py-3 font-medium">更新时间</th>
                 <th className="px-6 py-3 font-medium" />
@@ -42,6 +47,11 @@ export default async function AdminArticlesPage(): Promise<React.JSX.Element> {
             <tbody className="divide-y">
               {articles.map((article) => (
                 <tr key={article.id} className="hover:bg-accent/50">
+                  <td className="px-6 py-4 text-sm text-muted-foreground font-mono">
+                    {article.sortOrder > 0
+                      ? `Day ${String(article.sortOrder).padStart(2, "0")}`
+                      : "-"}
+                  </td>
                   <td className="px-6 py-4">
                     <div>
                       <p className="font-medium">{article.title}</p>
@@ -51,16 +61,9 @@ export default async function AdminArticlesPage(): Promise<React.JSX.Element> {
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <div className="flex flex-wrap gap-1">
-                      {article.tags.map((tag) => (
-                        <span
-                          key={tag}
-                          className="inline-flex rounded-full bg-secondary px-2 py-0.5 text-xs"
-                        >
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
+                    <span className="inline-flex rounded-full bg-secondary px-2 py-0.5 text-xs">
+                      {article.series}
+                    </span>
                   </td>
                   <td className="px-6 py-4">
                     <span
@@ -77,9 +80,11 @@ export default async function AdminArticlesPage(): Promise<React.JSX.Element> {
                     {article.updatedAt.toLocaleDateString("zh-CN")}
                   </td>
                   <td className="px-6 py-4">
-                    <Link href={`/admin/articles/${article.id}/edit`} className={buttonVariants({ variant: "ghost", size: "sm" })}>
-                      编辑
-                    </Link>
+                    <Button asChild variant="ghost" size="sm">
+                      <Link href={`/admin/series/${article.id}/edit`}>
+                        编辑
+                      </Link>
+                    </Button>
                   </td>
                 </tr>
               ))}

@@ -4,8 +4,8 @@ import {
   type ArticleSeriesGroup,
 } from "@/components/articles/articles-sidebar";
 
-// Difficulty ordering: easy → hard (series not listed here are hidden)
-const SERIES_ORDER = ["Claude 入门", "30天学Claude", "Claude API 开发", "Claude 高级开发"];
+// Left sidebar: category-style navigation (series articles use /series/ routes separately)
+const SERIES_ORDER = ["Claude 入门", "Claude API 开发", "Claude 高级开发"];
 
 export default async function ArticlesLayout({
   children,
@@ -20,7 +20,7 @@ export default async function ArticlesLayout({
 
   for (const a of sorted) {
     if (!a.series) continue;
-    if (!SERIES_ORDER.includes(a.series)) continue; // skip hidden series
+    if (!SERIES_ORDER.includes(a.series)) continue;
     if (!seriesMap.has(a.series)) {
       seriesMap.set(a.series, { name: a.series, articles: [] });
     }
@@ -30,7 +30,6 @@ export default async function ArticlesLayout({
     });
   }
 
-  // Order series by difficulty (SERIES_ORDER)
   const series = SERIES_ORDER
     .filter((name) => seriesMap.has(name))
     .map((name) => seriesMap.get(name)!);

@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/db/prisma";
 
 interface ArticleListItem {
+  id: string;
   slug: string;
   title: string;
   date: string;
@@ -18,6 +19,7 @@ interface ArticleDetail extends ArticleListItem {
 }
 
 function mapArticle(a: {
+  id: string;
   slug: string;
   title: string;
   publishedAt: Date | null;
@@ -31,6 +33,7 @@ function mapArticle(a: {
   readingTime: number;
 }): ArticleListItem {
   return {
+    id: a.id,
     slug: a.slug,
     title: a.title,
     date: (a.publishedAt ?? a.createdAt).toISOString(),
@@ -46,11 +49,37 @@ function mapArticle(a: {
 
 export async function getAllArticles(): Promise<ArticleListItem[]> {
   const articles = await prisma.article.findMany({
-    where: { publishedAt: { not: null } },
+    where: { publishedAt: { not: null }, series: null },
     orderBy: { publishedAt: "desc" },
   });
 
   return articles.map(mapArticle);
+}
+
+export async function getSeriesArticles(
+  seriesName: string,
+): Promise<ArticleListItem[]> {
+  const articles = await prisma.article.findMany({
+    where: { series: seriesName, publishedAt: { not: null } },
+    orderBy: { sortOrder: "asc" },
+  });
+
+  return articles.map(mapArticle);
+}
+
+export async function getSeriesArticleBySlug(
+  slug: string,
+): Promise<ArticleDetail | null> {
+  const article = await prisma.article.findFirst({
+    where: { slug, series: { not: null }, publishedAt: { not: null } },
+  });
+
+  if (!article) return null;
+
+  return {
+    ...mapArticle(article),
+    content: article.content,
+  };
 }
 
 export async function getArticlesBySeries(

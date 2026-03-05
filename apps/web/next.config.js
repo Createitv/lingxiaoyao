@@ -1,11 +1,14 @@
 /** @type {import('next').NextConfig} */
 const isDesktop = process.env.BUILD_TARGET === 'desktop';
+const isDev = process.env.NODE_ENV !== 'production';
 
 const nextConfig = {
   // Desktop mode: static export for Tauri
   output: isDesktop ? 'export' : undefined,
   images: {
-    unoptimized: isDesktop,
+    // Work around Next 15 dev-time remote image matcher instability.
+    // Keep optimization enabled in production web builds.
+    unoptimized: isDesktop || isDev,
     remotePatterns: isDesktop
       ? []
       : [
@@ -13,16 +16,19 @@ const nextConfig = {
           {
             protocol: 'https',
             hostname: '*.myqcloud.com',
+            pathname: '/**',
           },
           // Tencent VOD thumbnails
           {
             protocol: 'https',
             hostname: '*.vod2.myqcloud.com',
+            pathname: '/**',
           },
           // WeChat avatars
           {
             protocol: 'https',
             hostname: 'thirdwx.qlogo.cn',
+            pathname: '/**',
           },
         ],
   },

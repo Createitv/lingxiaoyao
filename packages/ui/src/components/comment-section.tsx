@@ -4,6 +4,11 @@ import React, { useState } from "react";
 import { cn } from "../lib/utils";
 import type { Comment, ContentType } from "@workspace/types";
 
+interface ReplyTarget {
+  parentId: string;
+  targetNickname: string;
+}
+
 interface CommentSectionProps {
   contentType: ContentType;
   contentSlug: string;
@@ -25,16 +30,34 @@ export function CommentSection({
 }: CommentSectionProps) {
   const [body, setBody] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [replyToId, setReplyToId] = useState<string | undefined>();
+  const [replyTarget, setReplyTarget] = useState<ReplyTarget | undefined>();
+
+  const handleReply = (comment: Comment) => {
+    const parentId = comment.parentId ?? comment.id;
+    setReplyTarget({
+      parentId,
+      targetNickname: comment.user.nickname,
+    });
+    if (comment.parentId) {
+      setBody(`@${comment.user.nickname} `);
+    } else {
+      setBody("");
+    }
+  };
+
+  const cancelReply = () => {
+    setReplyTarget(undefined);
+    setBody("");
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!body.trim() || !onSubmit) return;
     setIsSubmitting(true);
     try {
-      await onSubmit(body.trim(), replyToId);
+      await onSubmit(body.trim(), replyTarget?.parentId);
       setBody("");
-      setReplyToId(undefined);
+      setReplyTarget(undefined);
     } finally {
       setIsSubmitting(false);
     }
@@ -50,12 +73,17 @@ export function CommentSection({
 
       {currentUserId ? (
         <form onSubmit={handleSubmit} className="space-y-3">
-          {replyToId && (
+          {replyTarget && (
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <span>回复中...</span>
+              <span>
+                回复{" "}
+                <strong className="text-foreground">
+                  @{replyTarget.targetNickname}
+                </strong>
+              </span>
               <button
                 type="button"
-                onClick={() => setReplyToId(undefined)}
+                onClick={cancelReply}
                 className="underline"
               >
                 取消
@@ -94,7 +122,7 @@ export function CommentSection({
               comment={comment}
               replies={replies}
               currentUserId={currentUserId}
-              onReply={setReplyToId}
+              onReply={handleReply}
               onDelete={onDelete}
             />
           );
@@ -108,7 +136,7 @@ interface CommentItemProps {
   comment: Comment;
   replies: Comment[];
   currentUserId?: string;
-  onReply?: (id: string) => void;
+  onReply?: (comment: Comment) => void;
   onDelete?: (id: string) => Promise<void>;
 }
 
@@ -143,7 +171,7 @@ function CommentItem({
         <div className="flex items-center gap-3 text-xs text-muted-foreground">
           {onReply && (
             <button
-              onClick={() => onReply(comment.id)}
+              onClick={() => onReply(comment)}
               className="hover:text-foreground"
             >
               回复
@@ -166,6 +194,7 @@ function CommentItem({
                 comment={reply}
                 replies={[]}
                 currentUserId={currentUserId}
+                onReply={onReply}
                 onDelete={onDelete}
               />
             ))}

@@ -4,32 +4,43 @@ import { notFound } from "next/navigation";
 import rehypeHighlight from "rehype-highlight";
 import rehypeSlug from "rehype-slug";
 import remarkGfm from "remark-gfm";
-import { getArticleBySlug, getAllArticleSlugs } from "@/lib/content/articles";
+import {
+  getSeriesArticleBySlug,
+  getSeriesArticles,
+} from "@/lib/content/articles";
+import {
+  getSeriesConfigBySlug,
+  SERIES_CONFIG,
+} from "@/lib/content/series-config";
 import { mdxComponents } from "@/components/mdx";
 import { MdxRenderer } from "@/components/mdx/mdx-renderer";
-
 import { WechatFollowCard } from "@workspace/ui/components/wechat-follow-card";
 import { ProgressButton } from "@workspace/ui/components/progress-button";
 import { CommentSectionWrapper } from "@/components/comment-section-wrapper";
 import { extractTocHeadings } from "@/lib/toc-utils";
 import { Toc } from "@/components/toc";
 import { CopyMarkdownButton } from "@/components/articles/copy-markdown-button";
-import { getCurrentUser } from "@/lib/auth/session";
 
-interface ArticlePageProps {
-  params: Promise<{ slug: string }>;
+interface SeriesArticlePageProps {
+  params: Promise<{ seriesSlug: string; slug: string }>;
 }
 
 export async function generateStaticParams() {
-  const slugs = await getAllArticleSlugs();
-  return slugs.map((slug) => ({ slug }));
+  const allParams: { seriesSlug: string; slug: string }[] = [];
+  for (const config of SERIES_CONFIG) {
+    const articles = await getSeriesArticles(config.name);
+    for (const article of articles) {
+      allParams.push({ seriesSlug: config.slug, slug: article.slug });
+    }
+  }
+  return allParams;
 }
 
 export async function generateMetadata({
   params,
-}: ArticlePageProps): Promise<Metadata> {
+}: SeriesArticlePageProps): Promise<Metadata> {
   const { slug } = await params;
-  const article = await getArticleBySlug(slug);
+  const article = await getSeriesArticleBySlug(slug);
   if (!article) return {};
 
   return {
@@ -46,14 +57,15 @@ export async function generateMetadata({
   };
 }
 
-export default async function ArticlePage({ params }: ArticlePageProps) {
-  const { slug } = await params;
-  const [article, user] = await Promise.all([
-    getArticleBySlug(slug),
-    getCurrentUser(),
-  ]);
-  if (!article) notFound();
-  const isAdmin = user?.role === "admin";
+export default async function SeriesArticlePage({
+  params,
+}: SeriesArticlePageProps) {
+  const { seriesSlug, slug } = await params;
+  const config = getSeriesConfigBySlug(seriesSlug);
+  if (!config) notFound();
+
+  const article = await getSeriesArticleBySlug(slug);
+  if (!article || article.series !== config.name) notFound();
 
   const mdxOptions = {
     mdxOptions: {
@@ -72,7 +84,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     headline: article.title,
     description: article.summary,
     datePublished: article.date,
-    url: `${BASE_URL}/articles/${slug}`,
+    url: `${BASE_URL}/series/${seriesSlug}/${slug}`,
     image: article.coverUrl,
     author: {
       "@type": "Person",
@@ -101,25 +113,48 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <div className="article-detail flex">
+      <div className="flex">
         <div className="flex-1 min-w-0">
+          {/* Breadcrumb */}
+          <div className="px-6 lg:px-10 pt-6">
+            <Link
+              href={`/series/${seriesSlug}`}
+              className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="m12 19-7-7 7-7" />
+                <path d="M19 12H5" />
+              </svg>
+              {config.name}
+            </Link>
+          </div>
+
           {/* Hero header */}
-          <header className="py-16 md:py-24">
-            <div className="px-6 lg:px-10 max-w-3xl mx-auto">
+          <header className="py-12 md:py-16">
+            <div className="px-6 lg:px-10 max-w-3xl">
               {/* Series badge */}
               {article.series && (
                 <div className="hero-badge">
                   {article.series.toUpperCase()}
-                  {article.tags[0] && (
+                  {article.sortOrder > 0 && (
                     <>
                       <span className="opacity-30">·</span>
-                      {article.tags[0]}
+                      Day {String(article.sortOrder).padStart(2, "0")}
                     </>
                   )}
                 </div>
               )}
 
-              {/* Title with gradient in dark mode */}
+              {/* Title */}
               <h1 className="hero-title text-3xl md:text-4xl lg:text-5xl font-black tracking-tight leading-tight">
                 {article.title}
               </h1>
@@ -151,27 +186,12 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
                 )}
                 <span className="opacity-30">·</span>
                 <CopyMarkdownButton content={article.content} />
-                {isAdmin && (
-                  <>
-                    <span className="opacity-30">·</span>
-                    <Link
-                      href={`/admin/articles/${article.id}/edit`}
-                      className="inline-flex items-center gap-1 text-xs text-primary hover:underline"
-                    >
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
-                        <path d="m15 5 4 4" />
-                      </svg>
-                      编辑
-                    </Link>
-                  </>
-                )}
               </div>
             </div>
           </header>
 
           {/* Content */}
-          <article className="px-6 lg:px-10 max-w-3xl mx-auto">
+          <article className="px-6 lg:px-10 max-w-3xl">
             <div className="prose dark:prose-invert max-w-none">
               <MdxRenderer
                 source={article.content}
@@ -181,8 +201,15 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
             </div>
           </article>
 
+          {/* Navigation between series articles */}
+          <SeriesNav
+            seriesSlug={seriesSlug}
+            seriesName={config.name}
+            currentSlug={slug}
+          />
+
           {/* Footer */}
-          <footer className="px-6 lg:px-10 max-w-3xl mx-auto mt-12 space-y-6 border-t pt-8">
+          <footer className="px-6 lg:px-10 max-w-3xl mt-12 space-y-6 border-t pt-8">
             <ProgressButton
               contentType="article"
               contentSlug={slug}
@@ -200,5 +227,56 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
         <Toc headings={headings} />
       </div>
     </>
+  );
+}
+
+async function SeriesNav({
+  seriesSlug,
+  seriesName,
+  currentSlug,
+}: {
+  seriesSlug: string;
+  seriesName: string;
+  currentSlug: string;
+}) {
+  const articles = await getSeriesArticles(seriesName);
+  const currentIndex = articles.findIndex((a) => a.slug === currentSlug);
+  const prev = currentIndex > 0 ? articles[currentIndex - 1] : null;
+  const next =
+    currentIndex < articles.length - 1 ? articles[currentIndex + 1] : null;
+
+  if (!prev && !next) return null;
+
+  return (
+    <div className="px-6 lg:px-10 max-w-3xl mt-10">
+      <div className="flex gap-4">
+        {prev ? (
+          <Link
+            href={`/series/${seriesSlug}/${prev.slug}`}
+            className="flex-1 group rounded-lg border p-4 hover:border-primary/30 transition-colors"
+          >
+            <span className="text-xs text-muted-foreground">上一篇</span>
+            <p className="mt-1 text-sm font-medium group-hover:text-primary transition-colors line-clamp-1">
+              {prev.title}
+            </p>
+          </Link>
+        ) : (
+          <div className="flex-1" />
+        )}
+        {next ? (
+          <Link
+            href={`/series/${seriesSlug}/${next.slug}`}
+            className="flex-1 group rounded-lg border p-4 hover:border-primary/30 transition-colors text-right"
+          >
+            <span className="text-xs text-muted-foreground">下一篇</span>
+            <p className="mt-1 text-sm font-medium group-hover:text-primary transition-colors line-clamp-1">
+              {next.title}
+            </p>
+          </Link>
+        ) : (
+          <div className="flex-1" />
+        )}
+      </div>
+    </div>
   );
 }

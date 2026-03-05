@@ -34,16 +34,33 @@ function markdownToHtml(markdown: string): string {
   html = html.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
   html = html.replace(/\*(.+?)\*/g, "<em>$1</em>");
 
-  // Code blocks
+  // Code blocks — styled with colored-dot header like web version
   html = html.replace(
-    /```[\w]*\n([\s\S]*?)```/g,
-    '<pre style="background:#f6f8fa;padding:24rpx;border-radius:12rpx;overflow-x:auto;font-size:24rpx;line-height:1.6"><code>$1</code></pre>',
+    /```(\w*)\n([\s\S]*?)```/g,
+    (_, lang, code) => {
+      const langLabel = lang
+        ? `<span style="font-size:20rpx;color:#A39E99;letter-spacing:2rpx;font-family:monospace">${lang.toUpperCase()}</span>`
+        : "";
+      return (
+        `<div style="border:1rpx solid #E8E2DC;border-radius:16rpx;overflow:hidden;margin:24rpx 0;background:#FAF8F5">` +
+        `<div style="display:flex;align-items:center;justify-content:space-between;padding:16rpx 24rpx;border-bottom:1rpx solid #E8E2DC;background:rgba(245,240,235,0.5)">` +
+        `<div style="display:flex;align-items:center">` +
+        `<span style="display:inline-block;width:16rpx;height:16rpx;border-radius:50%;background:#ff5f56;margin-right:8rpx"></span>` +
+        `<span style="display:inline-block;width:16rpx;height:16rpx;border-radius:50%;background:#ffbd2e;margin-right:8rpx"></span>` +
+        `<span style="display:inline-block;width:16rpx;height:16rpx;border-radius:50%;background:#27c93f"></span>` +
+        `</div>` +
+        langLabel +
+        `</div>` +
+        `<pre style="padding:24rpx;font-size:24rpx;line-height:1.6;margin:0;white-space:pre-wrap;word-wrap:break-word"><code>${code}</code></pre>` +
+        `</div>`
+      );
+    },
   );
 
   // Inline code
   html = html.replace(
     /`([^`]+)`/g,
-    '<code style="background:#f6f8fa;padding:4rpx 12rpx;border-radius:6rpx;font-size:24rpx">$1</code>',
+    '<code style="background:#F0EBE5;padding:4rpx 12rpx;border-radius:8rpx;font-size:24rpx;font-family:monospace">$1</code>',
   );
 
   // Images (before links to avoid conflict with similar syntax)

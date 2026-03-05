@@ -402,7 +402,7 @@ export function ArticleForm({ initial }: { initial?: ArticleData }) {
                 value={form.series}
                 onChange={(e) => setForm({ ...form, series: e.target.value })}
                 className="w-full rounded-md border bg-background px-3 py-2 text-sm"
-                placeholder="如：30天学Claude"
+                placeholder="如：21天学习Claude"
               />
             </div>
 

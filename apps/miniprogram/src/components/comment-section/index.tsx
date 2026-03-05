@@ -6,6 +6,11 @@ import { isLoggedIn, getUser } from "@/services/auth";
 import type { Comment, ContentType } from "@workspace/types";
 import "./index.scss";
 
+interface ReplyTarget {
+  parentId: string;
+  targetNickname: string;
+}
+
 interface CommentSectionProps {
   contentType: ContentType;
   contentSlug: string;
@@ -17,7 +22,7 @@ export default function CommentSection({
 }: CommentSectionProps) {
   const [comments, setComments] = useState<Comment[]>([]);
   const [inputValue, setInputValue] = useState("");
-  const [replyTo, setReplyTo] = useState<string | undefined>();
+  const [replyTarget, setReplyTarget] = useState<ReplyTarget | undefined>();
   const [submitting, setSubmitting] = useState(false);
 
   const user = getUser();
@@ -29,6 +34,19 @@ export default function CommentSection({
   async function loadComments() {
     const list = await getComments(contentType, contentSlug);
     setComments(list);
+  }
+
+  function handleReply(comment: Comment) {
+    const parentId = comment.parentId ?? comment.id;
+    setReplyTarget({
+      parentId,
+      targetNickname: comment.user.nickname,
+    });
+    if (comment.parentId) {
+      setInputValue(`@${comment.user.nickname} `);
+    } else {
+      setInputValue("");
+    }
   }
 
   async function handleSubmit() {
@@ -43,13 +61,13 @@ export default function CommentSection({
       contentType,
       contentSlug,
       inputValue.trim(),
-      replyTo,
+      replyTarget?.parentId,
     );
     setSubmitting(false);
 
     if (result) {
       setInputValue("");
-      setReplyTo(undefined);
+      setReplyTarget(undefined);
       loadComments();
     } else {
       Taro.showToast({ title: "发送失败", icon: "error" });
@@ -80,14 +98,17 @@ export default function CommentSection({
       {/* Comment Input */}
       {isLoggedIn() ? (
         <View className="comment-form">
-          {replyTo && (
+          {replyTarget && (
             <View className="reply-hint">
               <Text className="reply-text">
-                回复评论
+                回复 @{replyTarget.targetNickname}
               </Text>
               <Text
                 className="cancel-reply"
-                onClick={() => setReplyTo(undefined)}
+                onClick={() => {
+                  setReplyTarget(undefined);
+                  setInputValue("");
+                }}
               >
                 取消
               </Text>
@@ -145,7 +166,7 @@ export default function CommentSection({
             <View className="comment-actions">
               <Text
                 className="action-btn"
-                onClick={() => setReplyTo(comment.id)}
+                onClick={() => handleReply(comment)}
               >
                 回复
               </Text>
@@ -173,14 +194,22 @@ export default function CommentSection({
                     </Text>
                   </View>
                   <Text className="comment-body">{reply.body}</Text>
-                  {user?.id === reply.userId && (
+                  <View className="comment-actions">
                     <Text
-                      className="action-btn delete"
-                      onClick={() => handleDelete(reply.id)}
+                      className="action-btn"
+                      onClick={() => handleReply(reply)}
                     >
-                      删除
+                      回复
                     </Text>
-                  )}
+                    {user?.id === reply.userId && (
+                      <Text
+                        className="action-btn delete"
+                        onClick={() => handleDelete(reply.id)}
+                      >
+                        删除
+                      </Text>
+                    )}
+                  </View>
                 </View>
               ))}
           </View>

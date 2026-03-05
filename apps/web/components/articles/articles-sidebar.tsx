@@ -23,7 +23,14 @@ export function ArticlesSidebar({ series }: ArticlesSidebarProps) {
 
   const [mobileOpen, setMobileOpen] = useState(false);
   const [search, setSearch] = useState("");
-  const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
+  // Default: all series collapsed except the first one ("Claude 入门")
+  const [collapsed, setCollapsed] = useState<Record<string, boolean>>(() => {
+    const initial: Record<string, boolean> = {};
+    series.forEach((s, i) => {
+      initial[s.name] = i !== 0; // only the first series is expanded
+    });
+    return initial;
+  });
   const [activeSeries, setActiveSeries] = useState<string | null>(null);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
@@ -100,7 +107,7 @@ export function ArticlesSidebar({ series }: ArticlesSidebarProps) {
       <nav className="p-3 space-y-1">
         <Link
           href="/articles"
-          className={`block rounded-md px-2 py-1.5 text-sm transition-colors ${
+          className={`block rounded-md px-2 py-2 text-base transition-colors ${
             pathname === "/articles" && !activeSeries
               ? "bg-accent text-accent-foreground font-medium"
               : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
@@ -118,7 +125,7 @@ export function ArticlesSidebar({ series }: ArticlesSidebarProps) {
               {/* Series header */}
               <button
                 onClick={() => toggleCollapse(group.name)}
-                className={`flex w-full items-center justify-between rounded-md px-2 py-1.5 text-sm transition-colors ${
+                className={`flex w-full items-center justify-between rounded-md px-2 py-2 text-base transition-colors ${
                   isActiveSeries
                     ? "bg-accent text-accent-foreground font-medium"
                     : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
@@ -152,7 +159,7 @@ export function ArticlesSidebar({ series }: ArticlesSidebarProps) {
                       <li key={article.slug}>
                         <Link
                           href={href}
-                          className={`block rounded-md px-2 py-1 text-xs transition-colors ${
+                          className={`block rounded-md px-2 py-1.5 text-sm transition-colors ${
                             isActive
                               ? "bg-accent text-accent-foreground font-medium"
                               : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
@@ -170,44 +177,12 @@ export function ArticlesSidebar({ series }: ArticlesSidebarProps) {
         })}
 
         {filteredSeries.length === 0 && search.trim().length > 0 && (
-          <p className="px-2 py-3 text-xs text-muted-foreground">
+          <p className="px-2 py-3 text-sm text-muted-foreground">
             未找到匹配的文章
           </p>
         )}
 
-        {/* Secondary navigation — hidden when searching, uses CSS to avoid hydration mismatch */}
-        <div className={search.trim() ? "hidden" : ""}>
-          <div className="my-3 border-t" />
-          <span className="block px-2 mb-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60">
-            学习计划
-          </span>
-          <Link
-            href="/articles/study-plan"
-            className={`flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors ${
-              pathname === "/articles/study-plan"
-                ? "bg-accent text-accent-foreground font-medium"
-                : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-            }`}
-          >
-            <svg
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M8 2v4" />
-              <path d="M16 2v4" />
-              <rect width="18" height="18" x="3" y="4" rx="2" />
-              <path d="M3 10h18" />
-              <path d="m9 16 2 2 4-4" />
-            </svg>
-            30天学习计划
-          </Link>
-        </div>
+        {/* Study plan link removed — now part of right "系列" sidebar */}
       </nav>
     </>
   );

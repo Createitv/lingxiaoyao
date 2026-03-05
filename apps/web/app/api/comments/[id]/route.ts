@@ -27,7 +27,7 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
     );
   }
 
-  if (comment.userId !== user.id) {
+  if (comment.userId !== user.id && user.role !== "admin") {
     return NextResponse.json(
       { success: false, error: "无权删除该评论" },
       { status: 403 },

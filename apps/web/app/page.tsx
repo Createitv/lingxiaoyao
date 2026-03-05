@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Image from "next/image";
 import { Button } from "@workspace/ui/components/button";
 import { getLatestArticles } from "@/lib/content/articles";
 import { getCourses } from "@/lib/content/courses";
@@ -220,12 +219,11 @@ export default async function HomePage() {
                 >
                   {course.coverUrl ? (
                     <div className="aspect-[16/9] bg-muted overflow-hidden relative">
-                      <Image
+                      <img
                         src={course.coverUrl}
                         alt={course.title}
-                        fill
-                        className="object-cover transition-transform duration-500 group-hover:scale-105"
-                        sizes="(max-width: 768px) 100vw, 33vw"
+                        loading="lazy"
+                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                       />
                     </div>
                   ) : (

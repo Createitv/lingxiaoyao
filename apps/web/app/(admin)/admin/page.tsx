@@ -2,16 +2,18 @@ import Link from "next/link";
 import { prisma } from "@/lib/db/prisma";
 
 export default async function AdminDashboard(): Promise<React.JSX.Element> {
-  const [articleCount, courseCount, userCount] = await Promise.all([
+  const [articleCount, courseCount, userCount, commentCount] = await Promise.all([
     prisma.article.count(),
     prisma.course.count(),
     prisma.user.count(),
+    prisma.comment.count({ where: { isDeleted: false } }),
   ]);
 
   const stats = [
     { label: "文章", count: articleCount, href: "/admin/articles" },
     { label: "课程", count: courseCount, href: "/admin/courses" },
     { label: "用户", count: userCount, href: "/admin/users" },
+    { label: "评论", count: commentCount, href: "/admin/comments" },
   ];
 
   const recentArticles = await prisma.article.findMany({
@@ -24,7 +26,7 @@ export default async function AdminDashboard(): Promise<React.JSX.Element> {
     <div className="space-y-8">
       <h1 className="text-2xl font-bold tracking-tight">仪表盘</h1>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {stats.map((stat) => (
           <Link
             key={stat.label}
