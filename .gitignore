@@ -64,6 +64,12 @@ scripts/svg-templates/
 scripts/migrate-content-to-db.ts
 token-management-article.html
 
+# Certificates (manage locally, never commit)
+*.crt
+*.pem
+*.key
+certs/
+
 # Claude Code
 CONTEXT.md
 .claude/
