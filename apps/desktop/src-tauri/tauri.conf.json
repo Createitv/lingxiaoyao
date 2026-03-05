@@ -46,7 +46,7 @@
       "open": true
     },
     "updater": {
-      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDRDOTYwMjM5QTI0NEVGMkQKUldRdDcwU2lPUUtXVEhMOENuVnlHN05NelFhUXZEKzFmRDFqam8vckZkcW1LbUtjazRhRk93WFQK",
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDE3QjY3RkEzNjI2NTBEMzAKUldRd0RXVmlvMysyRjlETVJwUit5cHpLWFQrL0JQM0NtMC9tWkVxaFNEM2JmbTlDMHR3SkQzSDYK",
       "endpoints": [
         "https://lingxiaoyao-1308220446.cos.ap-shanghai.myqcloud.com/desktop/latest.json"
       ]
