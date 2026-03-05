@@ -1,16 +1,23 @@
 import { useState } from "react";
 import { View, Text, Image, ScrollView } from "@tarojs/components";
-import Taro, { useDidShow } from "@tarojs/taro";
+import Taro, { useDidShow, useRouter } from "@tarojs/taro";
 import { getArticles } from "@/services/articles";
 import type { Article } from "@workspace/types";
 import "./index.scss";
 
 export default function ArticlesPage() {
+  const router = useRouter();
   const [articles, setArticles] = useState<Article[]>([]);
   const [selectedSeries, setSelectedSeries] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useDidShow(() => {
+    const seriesParam = router.params.series
+      ? decodeURIComponent(router.params.series)
+      : null;
+    if (seriesParam) {
+      setSelectedSeries(seriesParam);
+    }
     loadArticles();
   });
 
