@@ -8,8 +8,11 @@ interface CodeBlockProps {
 }
 
 /**
- * Enhanced code block with copy button and language label.
+ * Enhanced code block with colored-dot header, language label, and copy button.
  * Maps to <pre> elements in MDX.
+ *
+ * Styled via .article-detail .code-block-wrapper in globals.css for techy look,
+ * with graceful fallback outside article pages.
  */
 export function CodeBlock({ children, className, ...props }: CodeBlockProps) {
   const preRef = useRef<HTMLPreElement>(null);
@@ -35,21 +38,36 @@ export function CodeBlock({ children, className, ...props }: CodeBlockProps) {
   }
 
   return (
-    <div className="group relative">
-      {language && (
-        <span className="absolute right-12 top-2 text-xs text-muted-foreground/60 font-mono">
-          {language}
-        </span>
-      )}
-      <button
-        type="button"
-        onClick={handleCopy}
-        className="absolute right-2 top-2 rounded-md px-2 py-1 text-xs text-muted-foreground opacity-0 transition-opacity hover:bg-accent group-hover:opacity-100"
-        aria-label="复制代码"
+    <div className="code-block-wrapper group relative my-6 rounded-xl border border-border overflow-hidden bg-muted/40 dark:bg-[#0a1628]">
+      {/* Header bar with colored dots + language + copy */}
+      <div className="code-header flex items-center justify-between px-4 py-2.5 border-b border-border bg-muted/30 dark:bg-white/[0.02]">
+        <div className="flex items-center gap-1.5">
+          <span className="w-2.5 h-2.5 rounded-full bg-[#ff5f56]" />
+          <span className="w-2.5 h-2.5 rounded-full bg-[#ffbd2e]" />
+          <span className="w-2.5 h-2.5 rounded-full bg-[#27c93f]" />
+        </div>
+        <div className="flex items-center gap-3">
+          {language && (
+            <span className="text-[11px] font-mono uppercase tracking-widest text-muted-foreground/60">
+              {language}
+            </span>
+          )}
+          <button
+            type="button"
+            onClick={handleCopy}
+            className="rounded-md px-2 py-0.5 text-xs text-muted-foreground opacity-0 transition-opacity hover:bg-accent group-hover:opacity-100"
+            aria-label="复制代码"
+          >
+            {copied ? "已复制" : "复制"}
+          </button>
+        </div>
+      </div>
+      {/* Code body */}
+      <pre
+        ref={preRef}
+        className={`p-5 text-sm leading-relaxed overflow-x-auto font-mono border-0 rounded-none m-0 bg-transparent ${className ?? ""}`}
+        {...props}
       >
-        {copied ? "已复制" : "复制"}
-      </button>
-      <pre ref={preRef} className={className} {...props}>
         {children}
       </pre>
     </div>

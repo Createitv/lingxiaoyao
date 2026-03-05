@@ -168,3 +168,188 @@
     @apply mb-0;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════
+   Article Detail — Techy dark-accent styling
+   Scoped under .article-detail to avoid affecting other pages
+   ═══════════════════════════════════════════════════════════ */
+
+.article-detail {
+  --article-accent: hsl(18, 60%, 55%);
+  --article-accent2: hsl(25, 70%, 45%);
+  --article-accent3: hsl(35, 80%, 55%);
+  --article-green: #10b981;
+  --article-red: #ef4444;
+  --article-surface: hsl(var(--card));
+  --article-border: hsl(var(--border));
+}
+
+.dark .article-detail {
+  --article-accent: hsl(18, 60%, 60%);
+  --article-accent2: hsl(25, 70%, 50%);
+  --article-surface: hsl(30, 8%, 9%);
+  --article-border: hsl(30, 6%, 18%);
+}
+
+/* Hero gradient title in dark mode */
+.dark .article-detail .hero-title {
+  background: linear-gradient(135deg, hsl(35, 15%, 95%) 0%, var(--article-accent) 60%, var(--article-accent2) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Hero badge */
+.article-detail .hero-badge {
+  @apply inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-mono tracking-wider mb-6;
+  border: 1px solid color-mix(in srgb, var(--article-accent) 30%, transparent);
+  background: color-mix(in srgb, var(--article-accent) 5%, transparent);
+  color: var(--article-accent);
+}
+
+.article-detail .hero-badge::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  background: var(--article-accent);
+  border-radius: 50%;
+  animation: article-pulse 2s infinite;
+}
+
+@keyframes article-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.8); }
+}
+
+/* Section h2 numbering */
+.article-detail .prose {
+  counter-reset: article-section;
+}
+
+.article-detail .prose h2 {
+  @apply text-2xl font-bold tracking-tight mt-16 mb-6 pb-0 border-b-0;
+  counter-increment: article-section;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.article-detail .prose h2::before {
+  content: counter(article-section, decimal-leading-zero) " ·";
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  color: var(--article-accent);
+  font-weight: 400;
+  flex-shrink: 0;
+}
+
+.article-detail .prose h2::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, var(--article-border), transparent);
+}
+
+/* Illustration card */
+.article-detail .illustration-card {
+  @apply my-8 rounded-2xl border relative overflow-hidden;
+  background: var(--article-surface);
+  border-color: var(--article-border);
+  padding: 1.5rem;
+}
+
+.article-detail .illustration-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--article-accent), transparent);
+}
+
+.article-detail .illustration-card figcaption {
+  @apply mt-4 text-center text-xs font-mono;
+  color: hsl(var(--muted-foreground));
+}
+
+/* Code block wrapper — styled by CodeBlock component, enhanced here */
+.article-detail .code-block-wrapper {
+  @apply my-6 rounded-xl overflow-hidden;
+  border: 1px solid var(--article-border);
+}
+
+.article-detail .code-block-wrapper .code-header {
+  @apply flex items-center justify-between px-4 py-2.5;
+  border-bottom: 1px solid var(--article-border);
+  background: color-mix(in srgb, var(--article-surface) 80%, transparent);
+}
+
+.article-detail .code-block-wrapper pre {
+  @apply p-5 text-sm leading-relaxed overflow-x-auto border-0 rounded-none m-0;
+  background: var(--article-surface);
+}
+
+.dark .article-detail .code-block-wrapper pre {
+  background: hsl(30, 8%, 5%);
+}
+
+/* Summary card */
+.article-detail .summary-card {
+  @apply my-12 rounded-2xl border p-8 relative overflow-hidden;
+  border-color: var(--article-border);
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--article-accent) 5%, hsl(var(--card))),
+    color-mix(in srgb, var(--article-accent2) 5%, hsl(var(--card)))
+  );
+}
+
+.article-detail .summary-card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -20%;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, color-mix(in srgb, var(--article-accent) 4%, transparent) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* Hero background grid (dark mode only) */
+.dark .article-detail .hero-bg-grid {
+  background-image:
+    linear-gradient(color-mix(in srgb, var(--article-accent) 3%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--article-accent) 3%, transparent) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* Divider */
+.article-detail .prose hr {
+  @apply my-12 border-0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--article-border), transparent);
+}
+
+/* Table styling within article */
+.article-detail .prose table {
+  @apply w-full my-6 text-sm;
+}
+
+.article-detail .prose thead {
+  border-bottom: 1px solid var(--article-border);
+}
+
+.article-detail .prose th {
+  @apply text-left font-semibold px-4 py-2.5;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  color: var(--article-accent);
+}
+
+.article-detail .prose td {
+  @apply px-4 py-2.5;
+  border-bottom: 1px solid color-mix(in srgb, var(--article-border) 50%, transparent);
+}

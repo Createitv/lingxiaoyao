@@ -1,4 +1,3 @@
-import type { MDXComponents } from "mdx/types";
 import { Callout } from "./callout";
 import { CodeBlock } from "./code-block";
 import { EnhancedImage } from "./enhanced-image";
@@ -15,8 +14,9 @@ import { EnhancedImage } from "./enhanced-image";
  * Content is written in standard Markdown. Web renders enhanced components,
  * while miniprogram falls back to standard HTML elements naturally.
  */
-export const mdxComponents: MDXComponents = {
-  blockquote: Callout as any,
-  pre: CodeBlock as any,
-  img: EnhancedImage as any,
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const mdxComponents: Record<string, React.ComponentType<any>> = {
+  blockquote: Callout,
+  pre: CodeBlock,
+  img: EnhancedImage,
 };

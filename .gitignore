@@ -48,6 +48,9 @@ apps/web/public/search-index.json
 # SWC cache
 .swc/
 
+# Generated illustrations (uploaded to COS)
+illustrations/
+
 # Claude Code
 CONTEXT.md
 .claude/

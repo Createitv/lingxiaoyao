@@ -6,31 +6,38 @@ interface CalloutProps {
   children: ReactNode;
 }
 
-const CALLOUT_TYPES: Record<string, { label: string; className: string }> = {
+const CALLOUT_TYPES: Record<
+  string,
+  { label: string; icon: string; className: string }
+> = {
   Note: {
     label: "Note",
+    icon: "\u{1F4DD}",
     className:
-      "border-blue-200 bg-blue-50/50 dark:border-blue-900/50 dark:bg-blue-950/30",
+      "border-blue-200 bg-blue-50/50 dark:border-blue-800/40 dark:bg-blue-950/20",
   },
   Tip: {
     label: "Tip",
+    icon: "\u{1F4A1}",
     className:
-      "border-green-200 bg-green-50/50 dark:border-green-900/50 dark:bg-green-950/30",
+      "border-emerald-200 bg-emerald-50/50 dark:border-emerald-800/40 dark:bg-emerald-950/20",
   },
   Warning: {
     label: "Warning",
+    icon: "\u{26A0}\u{FE0F}",
     className:
-      "border-yellow-200 bg-yellow-50/50 dark:border-yellow-900/50 dark:bg-yellow-950/30",
+      "border-amber-200 bg-amber-50/50 dark:border-amber-800/40 dark:bg-amber-950/20",
   },
   Important: {
     label: "Important",
+    icon: "\u{26A1}",
     className:
-      "border-purple-200 bg-purple-50/50 dark:border-purple-900/50 dark:bg-purple-950/30",
+      "border-purple-200 bg-purple-50/50 dark:border-purple-800/40 dark:bg-purple-950/20",
   },
 };
 
 /**
- * Renders blockquotes as styled callout boxes.
+ * Renders blockquotes as styled callout boxes with icons.
  *
  * Markdown convention (cross-platform compatible):
  * > **Note:** This is a note.
@@ -83,11 +90,16 @@ export function Callout({ children }: CalloutProps) {
 
   return (
     <div
-      className={`not-prose my-6 rounded-lg border p-4 text-sm ${config.className}`}
+      className={`not-prose my-6 flex gap-4 rounded-xl border p-4 text-sm ${config.className}`}
       role="note"
     >
-      <div className="font-semibold mb-1">{config.label}</div>
-      <div className="[&>p]:m-0">{children}</div>
+      <div className="text-lg flex-shrink-0 mt-0.5" aria-hidden="true">
+        {config.icon}
+      </div>
+      <div className="min-w-0">
+        <div className="font-semibold mb-1 text-foreground">{config.label}</div>
+        <div className="[&>p]:m-0 text-muted-foreground">{children}</div>
+      </div>
     </div>
   );
 }

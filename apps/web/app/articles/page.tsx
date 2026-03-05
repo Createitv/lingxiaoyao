@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getAllArticles } from "@/lib/content/articles";
+import { ArticleCover } from "@/components/article-cover";
 
 export const metadata: Metadata = {
   title: "教程文章",
@@ -25,16 +26,11 @@ export default async function ArticlesPage({ searchParams }: ArticlesPageProps) 
   const { series } = await searchParams;
   const articles = await getAllArticles();
 
-  // Build ordered series list (by earliest sortOrder in each series)
-  const seriesMap = new Map<string, number>();
-  for (const a of articles) {
-    if (a.series && !seriesMap.has(a.series)) {
-      seriesMap.set(a.series, a.sortOrder);
-    }
-  }
-  const allSeries = Array.from(seriesMap.entries())
-    .sort((a, b) => a[1] - b[1])
-    .map(([name]) => name);
+  // Difficulty ordering: easy → hard
+  const SERIES_ORDER = ["Claude 入门", "30天学Claude", "Claude 高级开发"];
+  const allSeries = SERIES_ORDER.filter((name) =>
+    articles.some((a) => a.series === name)
+  );
 
   // Filter articles
   const filtered = series
@@ -120,38 +116,46 @@ export default async function ArticlesPage({ searchParams }: ArticlesPageProps) 
       {displayed.length === 0 ? (
         <p className="text-muted-foreground">暂无文章。</p>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {displayed.map((article) => (
             <Link
               key={article.slug}
               href={`/articles/${article.slug}`}
-              className="group block rounded-lg border bg-card p-5 transition-colors hover:border-primary/40 hover:shadow-sm"
+              className="group block rounded-lg border bg-card overflow-hidden transition-all hover:border-primary/40 hover:shadow-md"
             >
-              <div className="flex items-center gap-2 mb-2">
-                {article.series && (
-                  <span className="text-xs font-medium text-primary">
-                    {article.series}
+              {/* Cover image */}
+              {article.coverUrl ? (
+                <img
+                  src={article.coverUrl}
+                  alt={article.title}
+                  className="w-full aspect-[16/9] object-cover"
+                  loading="lazy"
+                />
+              ) : (
+                <ArticleCover
+                  title={article.title}
+                  series={article.series}
+                  sortOrder={article.sortOrder}
+                />
+              )}
+              {/* Card body */}
+              <div className="p-4">
+                <div className="flex items-center gap-2 mb-1.5">
+                  {article.series && (
+                    <span className="text-xs font-medium text-primary">
+                      {article.series}
+                    </span>
+                  )}
+                  <span className="text-xs text-muted-foreground">
+                    约 {article.readingTime} 分钟
                   </span>
-                )}
-                <span className="text-xs text-muted-foreground">
-                  约 {article.readingTime} 分钟
-                </span>
-              </div>
-              <h3 className="font-medium group-hover:text-primary transition-colors line-clamp-2">
-                {article.title}
-              </h3>
-              <p className="mt-2 text-sm text-muted-foreground line-clamp-2">
-                {article.summary}
-              </p>
-              <div className="mt-3 flex flex-wrap gap-1.5">
-                {article.tags.map((t) => (
-                  <span
-                    key={t}
-                    className="text-xs px-2 py-0.5 rounded-full bg-muted text-muted-foreground"
-                  >
-                    {t}
-                  </span>
-                ))}
+                </div>
+                <h3 className="font-medium group-hover:text-primary transition-colors line-clamp-2">
+                  {article.title}
+                </h3>
+                <p className="mt-1.5 text-sm text-muted-foreground line-clamp-2">
+                  {article.summary}
+                </p>
               </div>
             </Link>
           ))}

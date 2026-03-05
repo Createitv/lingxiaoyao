@@ -140,6 +140,9 @@ importers:
       flexsearch:
         specifier: ^0.7.43
         version: 0.7.43
+      github-slugger:
+        specifier: ^2.0.0
+        version: 2.0.0
       gray-matter:
         specifier: ^4.0.3
         version: 4.0.3
@@ -180,6 +183,9 @@ importers:
       '@types/flexsearch':
         specifier: ^0.7.6
         version: 0.7.42
+      '@types/github-slugger':
+        specifier: ^2.0.0
+        version: 2.0.0
       '@types/jsonwebtoken':
         specifier: ^9.0.6
         version: 9.0.10
@@ -2712,6 +2718,10 @@ packages:
 
   '@types/fs-extra@8.1.5':
     resolution: {integrity: sha512-0dzKcwO+S8s2kuF5Z9oUWatQJj5Uq/iqphEtE3GQJVRRYm/tD1LglU2UnXi2A8jLq5umkGouOXOR9y0n613ZwQ==}
+
+  '@types/github-slugger@2.0.0':
+    resolution: {integrity: sha512-z/FaJhjFPk5mtrsZWeqyvaJdcZKw6CVCTuynEMrcXtgyozN3yMrtL13xWv8uQV2bWtwSXkdiNM37HEKkEj9x1Q==}
+    deprecated: This is a stub types definition. github-slugger provides its own type definitions, so you do not need this installed.
 
   '@types/glob@7.2.0':
     resolution: {integrity: sha512-ZUxbzKl0IfJILTS6t7ip5fQQM/J3TJYubDm3nMbgubNNYS62eXeUpoLUC8/7fJNiFYHTrGPQn7hspDUzIHX3UA==}
@@ -10406,6 +10416,10 @@ snapshots:
   '@types/fs-extra@8.1.5':
     dependencies:
       '@types/node': 20.19.35
+
+  '@types/github-slugger@2.0.0':
+    dependencies:
+      github-slugger: 2.0.0
 
   '@types/glob@7.2.0':
     dependencies:
