@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import rehypeHighlight from "rehype-highlight";
 import rehypeSlug from "rehype-slug";
 import remarkGfm from "remark-gfm";
+import { rehypeInlineStyles } from "@/lib/rehype-inline-styles";
 import {
   getSeriesArticleBySlug,
   getSeriesArticles,
@@ -73,7 +74,7 @@ export default async function SeriesArticlePage({
   const mdxOptions = {
     mdxOptions: {
       remarkPlugins: [remarkGfm],
-      rehypePlugins: [rehypeHighlight, rehypeSlug],
+      rehypePlugins: [rehypeInlineStyles, rehypeHighlight, rehypeSlug],
     },
   };
 

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import rehypeHighlight from "rehype-highlight";
 import rehypeSlug from "rehype-slug";
+import { rehypeInlineStyles } from "@/lib/rehype-inline-styles";
 import { getChapterContent, getCourseBySlug } from "@/lib/content/courses";
 import { getCurrentUser } from "@/lib/auth/session";
 import { hasCoursePurchased } from "@/lib/db/user-courses";
@@ -188,7 +189,7 @@ export default async function ChapterPage({ params }: ChapterPageProps) {
               source={chapterContent.content}
               options={{
                 mdxOptions: {
-                  rehypePlugins: [rehypeHighlight, rehypeSlug],
+                  rehypePlugins: [rehypeInlineStyles, rehypeHighlight, rehypeSlug],
                 },
               }}
             />

@@ -10,6 +10,34 @@ interface MdxRendererProps {
 }
 
 /**
+ * Convert HTML-style `style="prop:val;..."` to JSX `style={{prop:"val",...}}`.
+ * MDX treats inline elements as JSX, so string-based style attrs cause React errors.
+ */
+function convertInlineStyles(mdx: string): string {
+  return mdx.replace(
+    /\bstyle="([^"]+)"/g,
+    (_match: string, cssStr: string) => {
+      const pairs = cssStr
+        .split(";")
+        .map((s: string) => s.trim())
+        .filter(Boolean)
+        .map((decl: string) => {
+          const idx = decl.indexOf(":");
+          if (idx === -1) return null;
+          const prop = decl
+            .substring(0, idx)
+            .trim()
+            .replace(/-([a-z])/g, (_: string, c: string) => c.toUpperCase());
+          const val = decl.substring(idx + 1).trim();
+          return `${prop}:"${val}"`;
+        })
+        .filter(Boolean);
+      return `style={{${pairs.join(",")}}}`;
+    },
+  );
+}
+
+/**
  * Workaround for React 19 dev incompatibility in next-mdx-remote/rsc.
  * Uses the same compile pipeline, but renders Content via JSX instead of React.createElement.
  */
@@ -19,7 +47,7 @@ export async function MdxRenderer({
   components = {},
 }: MdxRendererProps) {
   const { compiledSource, frontmatter, scope } = await serialize(
-    source,
+    convertInlineStyles(source),
     options,
     true,
   );

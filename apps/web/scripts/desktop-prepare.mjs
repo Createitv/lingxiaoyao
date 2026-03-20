@@ -66,6 +66,8 @@ removeDir("api");
 removeDir("(admin)");
 removeDir("dashboard");
 removeDir("payment");
+// Search page uses raw Prisma calls without fallback — not usable without DB
+removeDir("search");
 // Dynamic-route pages that import getCurrentUser → session.ts → next/headers
 // are incompatible with output: 'export'. Remove entirely.
 removeDir("articles/[slug]");
@@ -107,7 +109,7 @@ export function getSessionCookieOptions() {
 // ═══════════════════════════════════════════════════════════════════
 // 4. Replace "force-dynamic" → "force-static"
 // ═══════════════════════════════════════════════════════════════════
-for (const f of ["courses/page.tsx", "search/page.tsx"]) {
+for (const f of ["courses/page.tsx"]) {
   patch(f, (src) =>
     src.replace('export const dynamic = "force-dynamic"', 'export const dynamic = "force-static"')
   );

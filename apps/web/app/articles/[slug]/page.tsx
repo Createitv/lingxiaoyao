@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import rehypeHighlight from "rehype-highlight";
 import rehypeSlug from "rehype-slug";
 import remarkGfm from "remark-gfm";
+import { rehypeInlineStyles } from "@/lib/rehype-inline-styles";
 import { getArticleBySlug, getAllArticleSlugs } from "@/lib/content/articles";
 import { mdxComponents } from "@/components/mdx";
 import { MdxRenderer } from "@/components/mdx/mdx-renderer";
@@ -79,7 +80,7 @@ export default async function ArticlePage({ params }: ArticlePageProps): Promise
   const mdxOptions = {
     mdxOptions: {
       remarkPlugins: [remarkGfm],
-      rehypePlugins: [rehypeHighlight, rehypeSlug],
+      rehypePlugins: [rehypeInlineStyles, rehypeHighlight, rehypeSlug],
     },
   };
 
