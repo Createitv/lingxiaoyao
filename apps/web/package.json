@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "prisma generate && next build",
-    "start": "next start",
+    "start": "next start -H 0.0.0.0 -p ${PORT:-3000}",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "build:desktop": "prisma generate && node scripts/desktop-prepare.mjs && cross-env BUILD_TARGET=desktop JWT_SECRET=desktop-build DATABASE_URL=postgresql://x:x@localhost:5432/x next build"

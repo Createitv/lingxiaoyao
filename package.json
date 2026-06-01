@@ -12,7 +12,7 @@
     "build:web": "turbo run build --filter=web",
     "build:mp": "turbo run build --filter=miniprogram",
     "build:desktop": "BUILD_TARGET=desktop turbo run build --filter=web",
-    "start": "turbo run start --filter=web",
+    "start": "pnpm --filter web start",
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",
     "db:generate": "pnpm --filter web exec prisma generate",
