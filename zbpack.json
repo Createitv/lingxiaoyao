@@ -1,5 +1,5 @@
 {
-  "app_dir": "/",
+  "app_dir": "apps/web",
   "dockerfile": {
     "path": "Dockerfile"
   }
