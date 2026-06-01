@@ -1,0 +1,4 @@
+{
+  "app_dir": "apps/web",
+  "build_command": "apk add --no-cache openssl && pnpm run build"
+}
