@@ -7,7 +7,7 @@
     "dev:web": "rm -rf apps/web/.next && turbo run dev --filter=web",
     "dev:app": "turbo run dev --filter=desktop",
     "dev:mp": "turbo run dev --filter=miniprogram",
-    "build": "turbo run build --filter=web",
+    "build": "apk add --no-cache openssl 2>/dev/null || true; turbo run build --filter=web",
     "build:all": "turbo run build",
     "build:web": "turbo run build --filter=web",
     "build:mp": "turbo run build --filter=miniprogram",
