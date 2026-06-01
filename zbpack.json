@@ -1,3 +1,6 @@
 {
-  "use_dockerfile": true
+  "app_dir": "/",
+  "dockerfile": {
+    "path": "Dockerfile"
+  }
 }
